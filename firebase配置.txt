@@ -1,0 +1,37 @@
+firebase配置
+
+<script src="https://www.gstatic.com/firebasejs/3.6.2/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyAcq5DnLy6pVBuhVCDQSIJ2B4UblEKGhvA",
+    authDomain: "project--8472327297031008928.firebaseapp.com",
+    databaseURL: "https://project--8472327297031008928.firebaseio.com",
+    storageBucket: "project--8472327297031008928.appspot.com",
+    messagingSenderId: "571773526689"
+  };
+  firebase.initializeApp(config);
+</script>
+
+
+数据库
+https://project--8472327297031008928.firebaseio.com/
+
+
+打开终端窗口，导航至网站目录，或为网站创建目录
+
+登录 Google：
+
+$ firebase login
+启动项目：
+
+$ firebase init
+将静态文件添加到部署目录（默认设为公开）中
+
+部署网站：
+
+$ firebase deploy
+
+
+project--8472327297031008928
+https://project--8472327297031008928.firebaseapp.com

@@ -1,0 +1,104 @@
+CREATE TABLE `test`.`readers` (
+  `readerid` INT NOT NULL AUTO_INCREMENT COMMENT '',
+  `firstname` VARCHAR(45) NOT NULL COMMENT '',
+  `lastname` VARCHAR(45) NOT NULL COMMENT '',
+  `middlename` VARCHAR(45) NULL COMMENT '',
+  `church` VARCHAR(45) NULL COMMENT '',
+  `groups` VARCHAR(45) NULL COMMENT '',
+  `email` VARCHAR(45) NULL COMMENT '',
+  `phonenumber` VARCHAR(45) NULL COMMENT '',
+  `memo` VARCHAR(45) NULL COMMENT '',
+  PRIMARY KEY (`readerid`)  COMMENT '',
+  UNIQUE INDEX `readerid_UNIQUE` (`readerid` ASC)  COMMENT '');
+
+
+  CREATE TABLE `test`.`books` (
+  `bookid` INT NOT NULL COMMENT '',
+  `bookname` VARCHAR(45) NOT NULL COMMENT '',
+  `author` VARCHAR(45) NULL COMMENT '',
+  `version` VARCHAR(45) NULL COMMENT '',
+  `price` VARCHAR(45) NULL COMMENT '',
+  `location` VARCHAR(45) NULL COMMENT '',
+  PRIMARY KEY (`bookid`)  COMMENT '');
+
+CREATE TABLE `test`.`bookreader` (
+  `bookreaderid` INT NOT NULL AUTO_INCREMENT COMMENT '',
+  `bookid` INT NOT NULL COMMENT '',
+  `readerid` INT NOT NULL COMMENT '',
+  `sequence` INT NOT NULL COMMENT '',
+  `startdate` DATE NULL COMMENT '',
+  `enddate` DATE NULL COMMENT '',
+  `duration` DECIMAL NULL COMMENT '',
+  PRIMARY KEY (`bookreaderid`,`bookid`, `readerid`)  COMMENT '');
+
+
+  INSERT INTO test.bookreader(bookreaderid,bookid,readerid,sequence,startdate,enddate,duration)
+  VALUES(800001,100001,400001,1,'2016-11-28','2016-12-28',1)
+
+  批量插入数据
+  USE test;
+  delimiter // -- 把界定符号改成双斜杠
+  CREATE PROCEDURE BatchInsert(IN init INT, IN loop_time INT) -- 第一个参数 为初始ID号，可自己定义，第二个参数是生成多少记录
+  BEGIN
+    DECLARE Var INT;
+    DECLARE ID INT;
+    SET Var = 0;
+    SET ID = init;
+    WHILE Var < loop_time DO
+      INSERT INTO test.books( bookid,bookname,author,version,price,location) VALUES(ID,'Queen of the Dark Chamber','Chritina Tsai','1953','10.00','Plano');
+      SET ID= ID+1;
+      SET Var = Var +1;
+      END WHILE;
+      END;
+
+      CALL BatchInsert(100002,99);
+
+
+USE test;
+  delimiter // -- 把界定符号改成双斜杠
+  CREATE PROCEDURE BatchInsertReaders(IN init INT, IN loop_time INT) -- 第一个参数 为初始ID号，可自己定义，第二个参数是生成多少记录
+  BEGIN
+    DECLARE Var INT;
+    DECLARE ID INT;
+    SET Var = 0;
+    SET ID = init;
+    WHILE Var < loop_time DO
+      INSERT INTO test.readers( readerid,firstname,lastname,church,groups,email,phonenumber)
+      VALUES(ID,concat('fname',ID),
+      concat('Lastname_',ID）,
+      'PPCO','YOUTH',
+      concat(ID,'@google.com'),
+      concat('1-214-123',floor(rand(ID)*10000) mod 200)));
+      SET ID= ID+1;
+      SET Var = Var +1;
+  END WHILE;
+END;
+
+
+
+
+USE test;
+  delimiter // -- 把界定符号改成双斜杠
+  CREATE PROCEDURE BatchInsertBookReaders(IN init INT, IN loop_time INT) -- 第一个参数 为初始ID号，可自己定义，第二个参数是生成多少记录
+  BEGIN
+    DECLARE Var INT;
+    DECLARE ID INT;
+    DECLARE P1 DATE;
+    SET Var = 0;
+    SET ID = init;
+    WHILE Var < loop_time DO
+      SET @dt=concat(FLOOR(2015+(RAND()*2)),'-',lpad(FLOOR(1+(RAND()*12)),2,0),'-',LPAD(FLOOR(3+(RAND()*8)),2,0));
+      SET P1=date_add(@dt,interval -14 day);
+
+      INSERT INTO test.bookreader( bookreaderid,bookid,readerid,sequence,startdate,enddate,duration)
+       VALUES(ID,ID-700000,ID-400000,2,P1,@dt,datediff(@dt,P1));
+      SET ID= ID+1;
+      SET Var = Var +1;
+      END WHILE;
+      END;
+
+
+查询某书顺序：
+SELECT × FROM test.bookreader where bookid =100001 group by sequence;
+
+
