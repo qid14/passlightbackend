@@ -10,7 +10,7 @@ router.all('*',function(req,res,next){
 	res.set('Access-Control-Allow-Credentials',true);
 	res.set('Access-Control-Allow-Methods','GET');
 	res.set('Access-Control-Allow-Headers','X-Requested-Width,Content-Type,Authorization');
-	if('OPTIONS'==req.method) return res.send(200);
+	if('OPTIONS'==req.method) return res.sendStatus(200);
 	next();
 })
 router.get('/', function(req, res) {
@@ -27,5 +27,19 @@ SELECT * from test.questions
   console.log('Success select questions!');
   connection.end();
 });
+
+router.post('/', function(req, res) {
+    console.log('body:', req.body);
+
+    var connection = mysql.createConnection(dbconfig.connection);
+    var query = connection.query('INSERT INTO test.response (questionid, readerid, answer) VALUES ?', [req.body], function(error, results, fields) {
+        if (error) throw error;
+    //     // Neat!
+    });
+    // console.log(query.sql); // INSERT INTO posts SET `id` = 1, `title` = 'Hello MySQL'
+    connection.end();
+    res.send('Insert question answers ok!');
+});
+
 
 module.exports = router;
