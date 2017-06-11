@@ -1,15 +1,25 @@
 CREATE TABLE `test`.`readers` (
   `readerid` INT NOT NULL AUTO_INCREMENT COMMENT '',
-  `firstname` VARCHAR(45) NOT NULL COMMENT '',
-  `lastname` VARCHAR(45) NOT NULL COMMENT '',
-  `middlename` VARCHAR(45) NULL COMMENT '',
-  `church` VARCHAR(45) NULL COMMENT '',
-  `groups` VARCHAR(45) NULL COMMENT '',
-  `email` VARCHAR(45) NULL COMMENT '',
-  `phonenumber` VARCHAR(45) NULL COMMENT '',
-  `memo` VARCHAR(45) NULL COMMENT '',
+  `username` VARCHAR(64) NOT NULL COMMENT '',
+  `firstname` VARCHAR(64) NOT NULL COMMENT '',
+  `lastname` VARCHAR(64) NOT NULL COMMENT '',
+  `middlename` VARCHAR(64) NULL COMMENT '',
+  `password` VARCHAR(64) NULL COMMENT '',
+  `role` VARCHAR(16) NULL COMMENT '',
+  `church` VARCHAR(64) NULL COMMENT '',
+  `groups` VARCHAR(64) NULL COMMENT '',
+  `email` VARCHAR(64) NULL COMMENT '',
+  `phonenumber` VARCHAR(64) NULL COMMENT '',
+  `memo` VARCHAR(64) NULL COMMENT '',
+  `gender` VARCHAR(64) NULL COMMENT '',
+  `birth` VARCHAR(64) NULL COMMENT '',
+  `createdAt` VARCHAR(64) NULL COMMENT '',
+  `updatedAt` VARCHAR(64) NULL COMMENT '',
+  `version` VARCHAR(64) NULL COMMENT '',
   PRIMARY KEY (`readerid`)  COMMENT '',
-  UNIQUE INDEX `readerid_UNIQUE` (`readerid` ASC)  COMMENT '');
+  UNIQUE KEY `username` (`username`),
+UNIQUE INDEX `readerid_UNIQUE` (`readerid` ASC)  COMMENT ''
+  ) ;
 
 
   CREATE TABLE `test`.`books` (
@@ -102,3 +112,49 @@ USE test;
 SELECT × FROM test.bookreader where bookid =100001 group by sequence;
 
 
+
+
+
+  CREATE TABLE `test`.`books` (
+  `bookid` INT NOT NULL COMMENT '',
+  `bookname` VARCHAR(45) NOT NULL COMMENT '',
+  `auther` VARCHAR(45) NULL COMMENT '',
+  `version` VARCHAR(45) NULL COMMENT '',
+  `price` VARCHAR(45) NULL COMMENT '',
+  `location` VARCHAR(45) NULL COMMENT '',
+  PRIMARY KEY (`bookid`)  COMMENT '');
+
+CREATE TABLE `test`.`bookreader` (
+  `bookreaderid` INT NOT NULL AUTO_INCREMENT COMMENT '',
+  `bookid` INT NOT NULL COMMENT '',
+  `readerid` INT NOT NULL COMMENT '',
+  `sequence` INT NOT NULL COMMENT '',
+  `startdate` DATE NULL COMMENT '',
+  `enddate` DATE NULL COMMENT '',
+  `duration` DECIMAL NULL COMMENT '',
+  PRIMARY KEY (`bookreaderid`,`bookid`, `readerid`)  COMMENT '');
+
+
+----------------------------------------
+6/5/2017
+
+  CREATE TABLE `test`.`questions` (
+  `questionid` INT NOT NULL COMMENT '',
+  `questiontext` VARCHAR(200) NOT NULL COMMENT '', 
+  PRIMARY KEY (`questionid`)  COMMENT '');
+
+/*
+  CREATE TABLE `test`.`response` (
+  `responseid` AUTO_INCREMENT=1000,
+  `questionid` VARCHAR(45) NOT NULL COMMENT '',
+  `readerid` VARCHAR(45) NOT NULL COMMENT '',
+  `answer` VARCHAR(45) NULL COMMENT '',
+  PRIMARY KEY (`questionid`,`readerid`)  COMMENT '');
+  */
+
+   CREATE TABLE `test`.`response` (
+  `responseid` MEDIUMINT AUTO_INCREMENT,
+  `questionid` VARCHAR(45) NOT NULL COMMENT '',
+  `readerid` VARCHAR(45) NOT NULL COMMENT '',
+  `answer` VARCHAR(45) NULL COMMENT '',
+  PRIMARY KEY (`responseid`)  COMMENT '');

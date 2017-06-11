@@ -1,15 +1,108 @@
 var express = require('express');
 var router = express.Router();
-// var bodyParser = require('body-parser');
+const Sequelize = require('sequelize'); //ORM替代直接操作的mysql
 var mysql = require('mysql');
 var dbconfig = require('../config');
-// var app = express();
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({
-//   extended: true
-// }));
-/* GET users listing. */
-// console.log(bodyParser);
+
+
+// console.log('database:',dbconfig.database);
+// console.log('username:',dbconfig.connection.user);
+// console.log('password:',dbconfig.connection.password);
+// console.log('host:',dbconfig.connection.host);
+
+var sequelize = new Sequelize(dbconfig.database, dbconfig.connection.user, dbconfig.connection.password, {
+    host: dbconfig.connection.host,
+    dialect: 'mysql',
+    pool: {
+        max: 5,
+        min: 0,
+        idle: 30000
+    }
+});
+
+
+var Reader = sequelize.define('reader', {
+    readerid: {
+        type: Sequelize.BIGINT,
+        primaryKey: true
+    },
+    username: Sequelize.STRING(64),
+    firstname: Sequelize.STRING(64),
+    lastname: Sequelize.STRING(64),
+    middlename: Sequelize.STRING(64),
+    password: Sequelize.STRING(64),
+    church: Sequelize.STRING(64),
+    groups: Sequelize.STRING(64),
+    email: Sequelize.STRING(64),
+    phonenumber: Sequelize.STRING(64),
+    memo: Sequelize.STRING(64),
+    gender: Sequelize.BOOLEAN,
+    birth: Sequelize.STRING(10),
+    createdAt: Sequelize.BIGINT,
+    updatedAt: Sequelize.BIGINT,
+    version: Sequelize.BIGINT
+}, {
+    timestamps: false
+});
+
+var now = Date.now();
+
+Reader.create({
+    Readerid: 4000023,
+    username: 'Odie',
+    firstname: 'Oo',
+    lastname: 'La',
+    middlename: '',
+    password: 'Odie',
+    church: 'CCC',
+    groups: 'Pingan1',
+    email: 'e@g.c',
+    phonenumber: '111',
+    memo: '2',
+    gender: false,
+    birth: '2008-08-08',
+    createdAt: now,
+    updatedAt: now,
+    version: 0
+}).then(function(p) {
+    console.log('created.' + JSON.stringify(p));
+}).catch(function(err) {
+    console.log('failed: ' + err);
+});
+
+
+// (async(function testingAsyncAwait() {
+//     await (console.log("For Trump's Sake Print me!"));
+// }))();
+
+/*
+var asyncCreatereader =
+    // 	async function (){
+    async function() {
+        var r1 = await Reader.create({
+            Readerid: 4000023;
+            username: 'Odie',
+            firstname: 'Oo',
+            lastname: 'La',
+            middlename: '',
+            password: 'Odie',
+            church: 'CCC',
+            groups: 'Pingan1',
+            email: 'e@g.c',
+            phonenumber: '111',
+            memo: '2',
+            gender: false,
+            birth: '2008-08-08',
+            createdAt: now,
+            updatedAt: now,
+            version: 0
+        });
+        console.log('created: ' + JSON.stringify(r1));
+    };
+*/
+
+
+
 router.all('*', function(req, res, next) {
     console.log('Access-Control-Allow-Origin in readers');
     res.set('Access-Control-Allow-Origin', 'http://localhost:3000'); //记得在HOSTS文件中加入127.0.0.1 local.host
@@ -20,6 +113,7 @@ router.all('*', function(req, res, next) {
     next();
 })
 router.get('/', function(req, res) {
+    /*
     var connection = mysql.createConnection(dbconfig.connection);
     connection.query('SELECT * FROM test.readers;',
         function(err, rows) {
@@ -28,7 +122,47 @@ router.get('/', function(req, res) {
         });
     console.log('Success select readers!');
     connection.end();
+*/
+    // (async (function testingAsyncAwait() {
+    //     await (console.log("For Trump's Sake Print me!"));
+    // }))();
+
+    try {
+        Reader.findAll().then(function(readers){
+        	console.log(JSON.stringify(readers));
+        	res.send(readers);
+        });
+        // console.log(`find ${pets.length} pets:`);
+        // for (let r of readers) {
+        //     console.log(JSON.stringify(r));
+        // }
+        
+    } catch (err) {
+        console.log(err);
+    }
+    // async(function myFunction() {
+    //     try {
+    //         var readers = await Reader.findAll();
+    //         console.log(`find ${pets.length} pets:`);
+    //         for (let p of readers) {
+    //             console.log(JSON.stringify(p));
+    //         }
+    //         res.send(readers);
+    //     } catch (err) {
+    //         console.log(err);
+    //     }
+    // });
 });
+
+
+//     (async() => {
+//         var readers = await Reader.findAll();
+//         console.log(`find ${pets.length} pets:`);
+//         for (let p of readers) {
+//             console.log(JSON.stringify(p));
+//         }
+//     })();
+// });
 
 
 router.post('/', function(req, res) {
