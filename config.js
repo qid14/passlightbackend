@@ -5,5 +5,6 @@ module.exports = {
         'password': 'temp1234',
 
     },
-    'database': 'test'
+    'database': 'test',
+    'secretToken':'FF755A66CC6D45675289F6B1386A7'
 }

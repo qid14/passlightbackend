@@ -2,16 +2,16 @@ var express = require('express');
 var router = express.Router();
 const Sequelize = require('sequelize'); //ORM替代直接操作的mysql
 var mysql = require('mysql');
-var dbconfig = require('../config');
+var config = require('../config');
+var jwt = require('jsonwebtoken');
 
+// console.log('database:',config.database);
+// console.log('username:',config.connection.user);
+// console.log('password:',config.connection.password);
+// console.log('host:',config.connection.host);
 
-// console.log('database:',dbconfig.database);
-// console.log('username:',dbconfig.connection.user);
-// console.log('password:',dbconfig.connection.password);
-// console.log('host:',dbconfig.connection.host);
-
-var sequelize = new Sequelize(dbconfig.database, dbconfig.connection.user, dbconfig.connection.password, {
-    host: dbconfig.connection.host,
+var sequelize = new Sequelize(config.database, config.connection.user, config.connection.password, {
+    host: config.connection.host,
     dialect: 'mysql',
     pool: {
         max: 5,
@@ -90,9 +90,10 @@ router.all('*', function(req, res, next) {
     if ('OPTIONS' == req.method) return res.sendStatus(200);
     next();
 })
+
 router.get('/', function(req, res) {
     /*
-    var connection = mysql.createConnection(dbconfig.connection);
+    var connection = mysql.createConnection(config.connection);
     connection.query('SELECT * FROM test.readers;',
         function(err, rows) {
             if (err) console.log('Error selecting : s%', err);
@@ -132,6 +133,44 @@ router.get('/', function(req, res) {
     // });
 });
 
+router.post('/login', function(req, res) {
+    var username = req.body.username;
+    var password = req.body.password;
+    try {
+        Reader.findOne({
+            where: {
+                username: username,
+                password: password
+            }
+        }).then(function(reader) {
+            if (reader) {
+                console.log(JSON.stringify(reader));
+                var token = jwt.sign({
+                    id: reader.username
+                }, config.secretToken, {
+                    expiresIn: '10m',
+                    algorithm: 'HS256'
+                })
+                res.json({
+                    username: username,
+                    token: token
+                });
+            }else{
+            	return res.sendStatus(401);
+            }
+
+        }).catch(function(err) {
+            console.log(err);
+            return res.sendStatus(401);
+        })
+
+
+    } catch (err) {
+        console.log(err);
+    }
+
+});
+
 
 router.put('/', function(req, res) {
     // console.log('body:', req.body);
@@ -158,22 +197,22 @@ router.put('/', function(req, res) {
             console.log('users are:', JSON.stringify(users));
             // r.version++;
             users.forEach(function(u) {
-				u.version++;
-                    // console.log('fff----',firstname,u.version++);
-                    u.firstname=firstname
-                     u.lastname=lastname,
-                    u.middlename=middlename,
-                    u.church=church,
-                    u.groups=groups,
-                    u.email=email,
-                    u.phonenumber=phonenumber,
-                    u.memo=memo,
-                    u.gender=gender,
-                    u.birth=birth,
-                    u.updatedAt=now
+                u.version++;
+                // console.log('fff----',firstname,u.version++);
+                u.firstname = firstname
+                u.lastname = lastname,
+                    u.middlename = middlename,
+                    u.church = church,
+                    u.groups = groups,
+                    u.email = email,
+                    u.phonenumber = phonenumber,
+                    u.memo = memo,
+                    u.gender = gender,
+                    u.birth = birth,
+                    u.updatedAt = now
                 u.save();
-                })
-               
+            })
+
             res.send('Updated!');
         });
 
@@ -206,7 +245,7 @@ router.post('/', function(req, res) {
     });
 
     /*
-        var connection = mysql.createConnection(dbconfig.connection);
+        var connection = mysql.createConnection(config.connection);
         var reader = {
 
             firstname: firstname,
