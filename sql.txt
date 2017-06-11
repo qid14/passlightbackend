@@ -1,8 +1,8 @@
 CREATE TABLE `test`.`readers` (
   `readerid` INT NOT NULL AUTO_INCREMENT COMMENT '',
   `username` VARCHAR(64) NOT NULL COMMENT '',
-  `firstname` VARCHAR(64) NOT NULL COMMENT '',
-  `lastname` VARCHAR(64) NOT NULL COMMENT '',
+  `firstname` VARCHAR(64)  NULL COMMENT '',
+  `lastname` VARCHAR(64)  NULL COMMENT '',
   `middlename` VARCHAR(64) NULL COMMENT '',
   `password` VARCHAR(64) NULL COMMENT '',
   `role` VARCHAR(16) NULL COMMENT '',
@@ -15,12 +15,12 @@ CREATE TABLE `test`.`readers` (
   `birth` VARCHAR(64) NULL COMMENT '',
   `createdAt` VARCHAR(64) NULL COMMENT '',
   `updatedAt` VARCHAR(64) NULL COMMENT '',
-  `version` VARCHAR(64) NULL COMMENT '',
+  `version` INT NULL COMMENT '',
   PRIMARY KEY (`readerid`)  COMMENT '',
   UNIQUE KEY `username` (`username`),
 UNIQUE INDEX `readerid_UNIQUE` (`readerid` ASC)  COMMENT ''
   ) ;
-
+ alter table test.readers AUTO_INCREMENT=61001
 
   CREATE TABLE `test`.`books` (
   `bookid` INT NOT NULL COMMENT '',
