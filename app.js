@@ -1,4 +1,5 @@
 var express = require('express');
+var cors = require('cors');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -13,6 +14,10 @@ var borrows = require('./routes/borrows');
 var questions = require('./routes/questions');
 
 
+// var corsOptions = {
+//   origin: 'http://localhost:3000',
+//   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204 
+// }
 
 // var mysql      = require('mysql');
 // var connection = mysql.createConnection({
@@ -35,7 +40,7 @@ var questions = require('./routes/questions');
 
 
 var app = express();
-
+app.use(cors());
 var env = process.env.NODE_ENV || 'development';
 app.locals.ENV = env;
 app.locals.ENV_DEVELOPMENT = env == 'development';

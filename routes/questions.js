@@ -29,7 +29,7 @@ SELECT * from test.questions
 });
 
 router.post('/', function(req, res) {
-    console.log('body:', req.body);
+    // console.log('body:', req.body);
 
     var connection = mysql.createConnection(dbconfig.connection);
     var query = connection.query('INSERT INTO test.response (questionid, readerid, answer) VALUES ?', [req.body], function(error, results, fields) {

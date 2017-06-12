@@ -1,49 +1,54 @@
 var express = require('express');
+
+
 var router = express.Router();
-const Sequelize = require('sequelize'); //ORM替代直接操作的mysql
+// const Sequelize = require('sequelize'); //ORM替代直接操作的mysql
 var mysql = require('mysql');
 var config = require('../config');
 var jwt = require('jsonwebtoken');
+var auth = require('../middleware/auth');
+var Reader = require('../models/reader');
+
 
 // console.log('database:',config.database);
 // console.log('username:',config.connection.user);
 // console.log('password:',config.connection.password);
 // console.log('host:',config.connection.host);
 
-var sequelize = new Sequelize(config.database, config.connection.user, config.connection.password, {
-    host: config.connection.host,
-    dialect: 'mysql',
-    pool: {
-        max: 5,
-        min: 0,
-        idle: 30000
-    }
-});
+// var sequelize = new Sequelize(config.database, config.connection.user, config.connection.password, {
+//     host: config.connection.host,
+//     dialect: 'mysql',
+//     pool: {
+//         max: 5,
+//         min: 0,
+//         idle: 30000
+//     }
+// });
 
 
-var Reader = sequelize.define('reader', {
-    readerid: {
-        type: Sequelize.BIGINT,
-        primaryKey: true
-    },
-    username: Sequelize.STRING(64),
-    firstname: Sequelize.STRING(64),
-    lastname: Sequelize.STRING(64),
-    middlename: Sequelize.STRING(64),
-    password: Sequelize.STRING(64),
-    church: Sequelize.STRING(64),
-    groups: Sequelize.STRING(64),
-    email: Sequelize.STRING(64),
-    phonenumber: Sequelize.STRING(64),
-    memo: Sequelize.STRING(64),
-    gender: Sequelize.BOOLEAN,
-    birth: Sequelize.STRING(10),
-    createdAt: Sequelize.BIGINT,
-    updatedAt: Sequelize.BIGINT,
-    version: Sequelize.BIGINT
-}, {
-    timestamps: false
-});
+// var Reader = sequelize.define('reader', {
+//     readerid: {
+//         type: Sequelize.BIGINT,
+//         primaryKey: true
+//     },
+//     username: Sequelize.STRING(64),
+//     firstname: Sequelize.STRING(64),
+//     lastname: Sequelize.STRING(64),
+//     middlename: Sequelize.STRING(64),
+//     password: Sequelize.STRING(64),
+//     church: Sequelize.STRING(64),
+//     groups: Sequelize.STRING(64),
+//     email: Sequelize.STRING(64),
+//     phonenumber: Sequelize.STRING(64),
+//     memo: Sequelize.STRING(64),
+//     gender: Sequelize.BOOLEAN,
+//     birth: Sequelize.STRING(10),
+//     createdAt: Sequelize.BIGINT,
+//     updatedAt: Sequelize.BIGINT,
+//     version: Sequelize.BIGINT
+// }, {
+//     timestamps: false
+// });
 
 
 
@@ -81,15 +86,15 @@ var asyncCreatereader =
 
 
 
-router.all('*', function(req, res, next) {
-    console.log('Access-Control-Allow-Origin in readers');
-    res.set('Access-Control-Allow-Origin', 'http://localhost:3000'); //记得在HOSTS文件中加入127.0.0.1 local.host
-    res.set('Access-Control-Allow-Credentials', true);
-    res.set('Access-Control-Allow-Methods', 'GET');
-    res.set('Access-Control-Allow-Headers', 'X-Requested-Width,Content-Type,Authorization');
-    if ('OPTIONS' == req.method) return res.sendStatus(200);
-    next();
-})
+// router.all('*', function(req, res, next) {
+//     console.log('Access-Control-Allow-Origin in readers');
+//     res.set('Access-Control-Allow-Origin', 'http://localhost:3000'); //记得在HOSTS文件中加入127.0.0.1 local.host
+//     res.set('Access-Control-Allow-Credentials', true);
+//     res.set('Access-Control-Allow-Methods', 'GET');
+//     res.set('Access-Control-Allow-Headers', 'X-Requested-Width,Content-Type,Authorization');
+//     if ('OPTIONS' == req.method) return res.sendStatus(200);
+//     next();
+// })
 
 router.get('/', function(req, res) {
     /*
@@ -133,6 +138,16 @@ router.get('/', function(req, res) {
     // });
 });
 
+router.get('/check-state', auth.verifyToken, (req, res) => {
+
+  let content = {
+    success: true,
+    message: 'Successfully logged in'
+  }
+  res.send(content);
+
+});
+
 router.post('/login', function(req, res) {
     var username = req.body.username;
     var password = req.body.password;
@@ -146,9 +161,10 @@ router.post('/login', function(req, res) {
             if (reader) {
                 console.log(JSON.stringify(reader));
                 var token = jwt.sign({
-                    id: reader.username
+                    id: reader.username,
+                    role:reader.role
                 }, config.secretToken, {
-                    expiresIn: '10m',
+                    expiresIn: '1d',
                     algorithm: 'HS256'
                 })
                 res.json({
