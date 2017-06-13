@@ -18,6 +18,7 @@ var Reader = sequelize.define('reader', {
     firstname: Sequelize.STRING(64),
     lastname: Sequelize.STRING(64),
     middlename: Sequelize.STRING(64),
+    role:Sequelize.STRING(16),
     password: Sequelize.STRING(64),
     church: Sequelize.STRING(64),
     groups: Sequelize.STRING(64),

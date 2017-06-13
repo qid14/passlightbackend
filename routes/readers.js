@@ -140,11 +140,11 @@ router.get('/', function(req, res) {
 
 router.get('/check-state', auth.verifyToken, (req, res) => {
 
-  let content = {
-    success: true,
-    message: 'Successfully logged in'
-  }
-  res.send(content);
+    let content = {
+        success: true,
+        message: 'Successfully logged in'
+    }
+    res.send(content);
 
 });
 
@@ -159,10 +159,10 @@ router.post('/login', function(req, res) {
             }
         }).then(function(reader) {
             if (reader) {
-                console.log(JSON.stringify(reader));
+                console.log('+++++++', JSON.stringify(reader));
                 var token = jwt.sign({
                     id: reader.username,
-                    role:reader.role
+                    role: reader.role
                 }, config.secretToken, {
                     expiresIn: '1d',
                     algorithm: 'HS256'
@@ -171,8 +171,8 @@ router.post('/login', function(req, res) {
                     username: username,
                     token: token
                 });
-            }else{
-            	return res.sendStatus(401);
+            } else {
+                return res.sendStatus(401);
             }
 
         }).catch(function(err) {
@@ -196,6 +196,7 @@ router.put('/', function(req, res) {
     var firstname = req.body.firstname;
     var lastname = req.body.lastname;
     var middlename = req.body.middlename;
+    var role = req.body.role;
     var gender = req.body.gender;
     var birth = req.body.birth;
     var church = req.body.church;
@@ -220,6 +221,7 @@ router.put('/', function(req, res) {
                     u.middlename = middlename,
                     u.church = church,
                     u.groups = groups,
+                    u.role = role,
                     u.email = email,
                     u.phonenumber = phonenumber,
                     u.memo = memo,
