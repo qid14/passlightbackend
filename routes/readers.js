@@ -258,8 +258,12 @@ router.post('/', function(req, res) {
         version: 0
     }).then(function(p) {
         console.log('created.' + JSON.stringify(p));
+
+        res.status(200).send('Insert new user ok!');
     }).catch(function(err) {
         console.log('failed: ' + err);
+
+        res.render('error', { error: err })
     });
 
     /*
@@ -285,7 +289,6 @@ router.post('/', function(req, res) {
         connection.end();
         */
 
-    res.send('Insert new user ok!');
 });
 
 module.exports = router;
