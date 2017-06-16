@@ -96,7 +96,19 @@ var asyncCreatereader =
 //     next();
 // })
 
-router.get('/', function(req, res) {
+
+
+router.get('/check-state', auth.verifyToken, (req, res) => {
+
+    let content = {
+        success: true,
+        message: 'Successfully logged in'
+    }
+    res.send(content);
+
+});
+
+router.get('/username/:username', function(req, res) {
     /*
     var connection = mysql.createConnection(config.connection);
     connection.query('SELECT * FROM test.readers;',
@@ -110,9 +122,15 @@ router.get('/', function(req, res) {
     // (async (function testingAsyncAwait() {
     //     await (console.log("For Trump's Sake Print me!"));
     // }))();
-
+    var username = req.params.username;
+    console.log('username get:',username);
     try {
-        Reader.findAll().then(function(readers) {
+        Reader.findAll({
+            attributes: ['finishquestion', 'readerid'],
+            where: {
+                username: username
+            }
+        }).then(function(readers) {
             console.log(JSON.stringify(readers));
             res.send(readers);
         });
@@ -136,16 +154,6 @@ router.get('/', function(req, res) {
     //         console.log(err);
     //     }
     // });
-});
-
-router.get('/check-state', auth.verifyToken, (req, res) => {
-
-    let content = {
-        success: true,
-        message: 'Successfully logged in'
-    }
-    res.send(content);
-
 });
 
 router.post('/login', function(req, res) {
@@ -189,7 +197,7 @@ router.post('/login', function(req, res) {
 
 
 router.put('/', function(req, res) {
-    // console.log('body:', req.body);
+    console.log('PUT: body:', req.body);
 
     var now = Date.now();
     var username = req.body.username;
@@ -204,6 +212,7 @@ router.put('/', function(req, res) {
     var email = req.body.email;
     var phonenumber = req.body.phonenumber;
     var memo = req.body.memo;
+    var password = req.body.password;
 
     try {
         Reader.findAll({
@@ -216,8 +225,9 @@ router.put('/', function(req, res) {
             users.forEach(function(u) {
                 u.version++;
                 // console.log('fff----',firstname,u.version++);
-                u.firstname = firstname
-                u.lastname = lastname,
+                u.password = password;
+                u.firstname = firstname,
+                    u.lastname = lastname,
                     u.middlename = middlename,
                     u.church = church,
                     u.groups = groups,
@@ -263,7 +273,9 @@ router.post('/', function(req, res) {
     }).catch(function(err) {
         console.log('failed: ' + err);
 
-        res.render('error', { error: err })
+        res.render('error', {
+            error: err
+        })
     });
 
     /*
@@ -290,5 +302,37 @@ router.post('/', function(req, res) {
         */
 
 });
+
+
+/*update a record*/
+// router.put('/', function(req, res) {
+//     // console.log('body:', req.body);
+
+//     var now = Date.now();
+//     // var username = req.body.username;
+//     // var password = req.body.password;
+
+
+//     Reader.update({
+
+//         // username: username,
+//         // password: password,
+//         { createdAt: now, },
+//   { where: { _id: 1 } }
+//         createdAt: now,
+//         version: 0
+//     }).then(function(p) {
+//         console.log('created.' + JSON.stringify(p));
+
+//         res.status(200).send('Insert new user ok!');
+//     }).catch(function(err) {
+//         console.log('failed: ' + err);
+
+//         res.render('error', { error: err })
+//     });
+
+
+
+// });
 
 module.exports = router;

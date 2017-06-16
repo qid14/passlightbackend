@@ -22,6 +22,10 @@ UNIQUE INDEX `readerid_UNIQUE` (`readerid` ASC)  COMMENT ''
   ) ;
  alter table test.readers AUTO_INCREMENT=61001
 
+  alter table test.readers  
+ Add column finishquestion  VARCHAR(8) AFTER `role` 
+ 
+
   CREATE TABLE `test`.`books` (
   `bookid` INT NOT NULL COMMENT '',
   `bookname` VARCHAR(45) NOT NULL COMMENT '',
