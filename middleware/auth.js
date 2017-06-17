@@ -4,17 +4,17 @@ var jwt = require('jsonwebtoken');
 module.exports = {
 
     verifyToken: ( (req, res, next) => {
-        console.log('----------------');
-        console.log('--1',req.body.token );
-        console.log('--3',req.headers['x-access-token']);
-        console.log('--2',req.query.token);
-        console.log('--4-------------',req.headers['authorization']);
+        // console.log('----------------');
+        // console.log('--1',req.body.token );
+        // console.log('--3',req.headers['x-access-token']);
+        // console.log('--2',req.query.token);
+        // console.log('--4-------------',req.headers['authorization']);
         let token = req.body.token || req.query.token || req.headers['x-access-token'] ||  req.headers['authorization'];
 
         if( token ) {
-            console.log('5:',typeof token);
+            console.log('auth 5:',typeof token);
             var tok= token.substr(7).trim();
-            console.log('6:',tok);
+            console.log('auth 6:',tok);
             jwt.verify(tok, config.secretToken, (err, decoded) => {
 
                 if (err) {

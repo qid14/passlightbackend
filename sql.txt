@@ -24,7 +24,7 @@ UNIQUE INDEX `readerid_UNIQUE` (`readerid` ASC)  COMMENT ''
 
   alter table test.readers  
  Add column finishquestion  VARCHAR(8) AFTER `role` 
- 
+
 
   CREATE TABLE `test`.`books` (
   `bookid` INT NOT NULL COMMENT '',
@@ -35,7 +35,7 @@ UNIQUE INDEX `readerid_UNIQUE` (`readerid` ASC)  COMMENT ''
   `location` VARCHAR(45) NULL COMMENT '',
   PRIMARY KEY (`bookid`)  COMMENT '');
 
-CREATE TABLE `test`.`bookreader` (
+CREATE TABLE `test`.`bookreaders` (
   `bookreaderid` INT NOT NULL AUTO_INCREMENT COMMENT '',
   `bookid` INT NOT NULL COMMENT '',
   `readerid` INT NOT NULL COMMENT '',

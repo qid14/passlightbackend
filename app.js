@@ -12,6 +12,7 @@ var books = require('./routes/books');
 var readers = require('./routes/readers');
 var borrows = require('./routes/borrows');
 var questions = require('./routes/questions');
+var bookreaders = require('./routes/bookreaders');
 
 
 // var corsOptions = {
@@ -65,6 +66,7 @@ app.use('/books', books);
 app.use('/readers', readers);
 app.use('/borrows', borrows);
 app.use('/questions', questions);
+app.use('/bookreaders', bookreaders);
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
