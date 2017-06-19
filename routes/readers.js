@@ -123,10 +123,10 @@ router.get('/username/:username', function(req, res) {
     //     await (console.log("For Trump's Sake Print me!"));
     // }))();
     var username = req.params.username;
-    console.log('username get:',username);
+    console.log('username get:', username);
     try {
         Reader.findAll({
-            attributes: ['finishquestion', 'readerid'],
+            attributes: ['firstname', 'lastname', 'middlename', 'email', 'phonenumber', 'church', 'groups', 'finishquestion', 'readerid'],
             where: {
                 username: username
             }
