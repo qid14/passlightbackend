@@ -18,7 +18,7 @@ router.get('/', function(req, res) {
 	var querystr=`
 SELECT a.firstname,a.lastname,a.church,a.groups,a.email,b.startdate,b.enddate,b.duration,c.bookname,c.author
 	 	FROM test.readers as a
-	 	left join test.bookreader as b
+	 	left join test.bookreaders as b
 	 	ON a.readerid = b.readerid
 	 	left join test.books as c on b.bookid = c.bookid
 	 	WHERE startdate is not null;

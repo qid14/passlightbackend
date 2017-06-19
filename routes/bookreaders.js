@@ -6,6 +6,8 @@ var config = require('../config');
 var jwt = require('jsonwebtoken');
 var auth = require('../middleware/auth');
 var BookReader = require('../models/bookreadermodel');
+var Reader = require('../models/reader');
+var moment = require('moment');
 // console.log('bookReaders-----------No.1', BookReader);
 
 router.all('*', function(req, res, next) {
@@ -29,51 +31,121 @@ router.get('/check-state', auth.verifyToken, (req, res) => {
 
 router.get('/', (req, res) => {
     // console.log('bookreaders:', req);
-    BookReader.findAll().then(function(bookreader) {
-        console.log('bookReaders-----------No.2:', JSON.stringify(bookreader));
-        res.send(bookreader);
+    // BookReader.findAll().then(function(results) {
+
+    //     if (results.length > 0) {
+    //         results.forEach(function(r) {
+    //             r.duration = moment(r.startdate, "YYYY-MM-DD").fromNow();
+    //             r.save();
+    //         })
+
+    //     }
+    // })
+    BookReader.findAll().then(function(results) {
+        if (results.length > 0) {
+            results.forEach(function(r) {
+                r.duration = moment(r.startdate, "YYYY-MM-DD").fromNow();
+                r.save();
+            })
+
+        }
+        console.log('bookReaders-----------No.2:', JSON.stringify(results));
+        res.send(results);
     });
 
 });
 
 
-
+//新建传递关系
 router.post('/', (req, res) => {
     var bookid = req.body.bookid;
-    var readerid = req.body.readerid;
+    var username = req.body.username;
+    var email = req.body.email;
+    var readerid =60001;
     var startdate = req.body.startdate;
+    var ss = moment(startdate, "MM/DD/YYYY");
+    // console.log(typeof startdate,ee);
+    var enddate = ss.add(1, 'months')
+    // console.log('startdate bookReaders-----------No.6:', enddate);
+    var duration = moment(startdate, "MM/DD/YYYY").fromNow();
+    // console.log('duration: bookReaders-----------No.7:', duration);
     var sequence = 1;
-    BookReader.findAll({
+    Reader.findAll({
         where: {
-            bookid: bookid,
-            readerid: readerid
+            username: username,
+            email: email
         }
-    }).then(function(result) {
-        // console.log('bookReaders-----------No.3:', JSON.stringify(result));
-        var maxsequence = Math.max.apply(Math, result.map(function(o) {
-            return o.sequence;
-        }))
-        console.log('bookReaders-----------No.5:', maxsequence);
+    }).then(function(users) {
+        console.log('bookReaders-----------No.3:', JSON.stringify(users));
+        if (users.length > 0) {
+            readerid=users[0].readerid;
+            console.log('bookReaders-----------No.4:',readerid);
+
+            BookReader.findAll({
+                where: {
+                    bookid: bookid
+                }
+            }).then(function(result) {
+
+                if (result.length > 0) {
+                    var maxsequence = Math.max.apply(Math, result.map(function(o) {
+                        return o.sequence;
+                    }))
+                    console.log('bookReaders-----------No.5:', maxsequence);
 
 
-        BookReader.create({
+                    BookReader.create({
 
-            bookid: bookid,
-            readerid: readerid,
-            startdate: startdate,
-            sequence:maxsequence+1
+                        bookid: bookid,
+                        readerid: readerid,
+                        startdate: startdate,
+                        sequence: maxsequence + 1,
+                        enddate: enddate,
+                        duration: duration
 
-        }).then(function(p) {
-            console.log('Bookreader created.' + JSON.stringify(p));
+                    }).then(function(p) {
+                        console.log('Bookreader created.' + JSON.stringify(p));
 
-            res.status(200).send('Insert new bookreader record ok!');
-        }).catch(function(err) {
-            console.log('failed: ' + err);
+                        res.status(200).send('Insert new bookreader record ok!');
+                    }).catch(function(err) {
+                        console.log('failed: ' + err);
 
-            res.render('error', {
-                error: err
+                        res.render('error', {
+                            error: err
+                        })
+                    });
+                }
             })
-        });
+        }
+    })
+
+})
+
+
+//查看借阅关系时要先刷新纪录
+router.put('/', (req, res) => {
+
+    // var startdate = req.body.startdate;
+    // var ss = moment(startdate, "MM/DD/YYYY");
+
+    // var duration = moment(startdate, "MM/DD/YYYY").fromNow();
+    // console.log('duration: bookReaders-----------No.8:', duration);
+
+    BookReader.findAll().then(function(results) {
+        // console.log('bookReaders-----------No.9:', JSON.stringify(results));
+
+        if (results.length > 0) {
+            results.forEach(function(r) {
+                r.duration = moment(r.startdate, "YYYY-MM-DD").fromNow();
+                console.log('bookReaders-----------No.10:',
+                    r.startdate)
+                console.log('bookReaders-----------No.11:',
+                    r.duration)
+
+                r.save();
+            })
+
+        }
     })
 
 })
