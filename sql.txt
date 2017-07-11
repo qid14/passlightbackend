@@ -166,3 +166,66 @@ CREATE TABLE `test`.`bookreader` (
   `readerid` VARCHAR(45) NOT NULL COMMENT '',
   `answer` VARCHAR(45) NULL COMMENT '',
   PRIMARY KEY (`responseid`)  COMMENT '');
+
+
+6/30/2017
+CREATE TABLE `test`.`posts` (
+  `postid` INT NOT NULL AUTO_INCREMENT COMMENT '',
+  `username` VARCHAR(64) NULL COMMENT '',
+  `content` varchar(500) NULL,
+  `createdAt` VARCHAR(64) NULL COMMENT '',
+  `updatedAt` VARCHAR(64) NULL COMMENT '',
+  `version` INT NULL COMMENT '',
+  PRIMARY KEY (`postid`)  COMMENT ''
+  ) ;
+
+
+
+
+7/10/2017 Statistic count
+ SELECT   
+SUM( CASE WHEN questionid = '1001' and answer='Yes' THEN 
+                      1 ELSE 0 END) as 'Yes_1001',
+                       SUM( CASE WHEN questionid = '1001' and answer='No' THEN 
+                      1 ELSE 0 END) as 'No_1001', 
+                      
+                      SUM( CASE WHEN questionid = '1002' and answer='Yes' THEN 
+                      1 ELSE 0 END) as 'Yes_1002',
+                       SUM( CASE WHEN questionid = '1002' and answer='No' THEN 
+                      1 ELSE 0 END) as 'No_1002', 
+
+SUM( CASE WHEN questionid = '1001' and answer='Yes' THEN 
+                      1 ELSE 0 END) as 'Yes_1003',
+                       SUM( CASE WHEN questionid = '1003' and answer='No' THEN 
+                      1 ELSE 0 END) as 'No_1003', 
+
+
+SUM( CASE WHEN questionid = '1004' and answer='Yes' THEN 
+                      1 ELSE 0 END) as 'Yes_1004',
+                       SUM( CASE WHEN questionid = '1004' and answer='No' THEN 
+                      1 ELSE 0 END) as 'No_1004',
+                     
+                      SUM( CASE WHEN questionid = '1005' and answer='Yes' THEN 
+                      1 ELSE 0 END) as 'Yes_1005',
+                       SUM( CASE WHEN questionid = '1005' and answer='No' THEN 
+                      1 ELSE 0 END) as 'No_1005', 
+SUM( CASE WHEN questionid = '1001' and answer='Yes' THEN 
+                      1 ELSE 0 END) as 'Yes_1006',
+                       SUM( CASE WHEN questionid = '1006' and answer='No' THEN 
+                      1 ELSE 0 END) as 'No_1006', 
+SUM( CASE WHEN questionid = '1001' and answer='Yes' THEN 
+                      1 ELSE 0 END) as 'Yes_1007',
+                       SUM( CASE WHEN questionid = '1007' and answer='No' THEN 
+                      1 ELSE 0 END) as 'No_1007', 
+SUM( CASE WHEN questionid = '1001' and answer='Yes' THEN 
+                      1 ELSE 0 END) as 'Yes_1008',
+                       SUM( CASE WHEN questionid = '1008' and answer='No' THEN 
+                      1 ELSE 0 END) as 'No_1008', 
+SUM( CASE WHEN questionid = '1001' and answer='Yes' THEN 
+                      1 ELSE 0 END) as 'Yes_1009',
+                       SUM( CASE WHEN questionid = '1009' and answer='No' THEN 
+                      1 ELSE 0 END) as 'No_1009' 
+                  
+                      
+                      
+FROM  test.response

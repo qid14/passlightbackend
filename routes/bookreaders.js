@@ -8,7 +8,94 @@ var auth = require('../middleware/auth');
 var BookReader = require('../models/bookreadermodel');
 var Reader = require('../models/reader');
 var moment = require('moment');
+
+// var lolex = require("lolex");
+// var clock = lolex.install();
+// console.log('clock is :',lolex,clock);
+/*
+var sinon = require("https://cdnjs.cloudflare.com/ajax/libs/sinon.js/1.15.4/sinon.min.js");
+var clock = sinon.useFakeTimers();
+*/
+
+// clock.uninstall();
+
+
 // console.log('bookReaders-----------No.1', BookReader);
+var schedule = require('node-schedule');
+var counter = 0,
+    taskSchedule = new schedule.RecurrenceRule();
+
+taskSchedule.minute = 2;
+
+function reportOnSchdeule() {
+    //increment the counter
+    counter++;
+
+    //report that the scheduled task ran
+    console.log('The scheduled task ran. This is iteration #: ' + counter);
+
+    BookReader.findAll({
+        where: {
+            enddate: null
+        }
+    }).then(function(bookreaders) {
+        // console.log('bookReaders-----------No.3:', JSON.stringify(bookreaders));
+        if (bookreaders.length > 0) {
+            bookreaders.forEach(function(bookreader) {
+                // console.log('bookreader.startdate No.8', bookreader);
+
+                b = moment(bookreader.startdate);
+                a = moment(new Date());
+
+
+                // console.log('bookreader.startdate No.9', a.diff(b, 'days'));
+                bookreader.duration = a.diff(b, 'days');
+
+                // bookreader.duration = Math.floor(( moment.now()-bookreader.startdate  ) / 86400000);
+                console.log('bookReaders-----------No.10:', bookreader.duration);
+                bookreader.save();
+            })
+
+
+        }
+
+    })
+
+}
+
+/*用于快速测试reportOnSchdeule函数是否更新了数据库*/
+// var myInterval = setInterval(reportOnSchdeule, 5000, "Interval");
+
+// function stopInterval() {
+//     clearTimeout(myInterval);
+//     //myInterval.unref();
+// }
+// setTimeout(stopInterval, 31000);
+// */
+schedule.scheduleJob(taskSchedule, reportOnSchdeule);
+console.log('The schdule has been initialzed');
+
+
+
+// var date = new Date("2017-07-7");
+//         var clock = lolex.install(date);
+//         clock.setTimeout(schedule.scheduleJob(taskSchedule, reportOnSchdeule),3800);
+//         console.log(moment(clock.now));
+// console.log('--------xxxxxxxx')
+
+//     clock.uninstall();
+// ,15);
+// console.log('setTimeout is :',setTimeout);
+// clock.next()
+// setTimeout(fn, 15); // Schedules with clock.setTimeout
+
+// var rule = new schedule.RecurrenceRule();
+// rule.minute = 1;
+// console.log('rule is:',rule);
+// var j = schedule.scheduleJob(rule, function(){
+//   console.log('The answer to life, the universe, and everything!');
+// });
+// console.log('j is',j);
 
 router.all('*', function(req, res, next) {
     console.log('Access-Control-Allow-Origin in questions');
@@ -27,6 +114,31 @@ router.get('/check-state', auth.verifyToken, (req, res) => {
     }
     res.send(content);
 
+});
+
+
+router.get('/countreading', (req, res) => {
+    BookReader.findAndCountAll({
+            where: {
+                enddate: null
+            }
+        })
+        .then(result => {
+            console.log('count:',result.count);
+
+           res.send(result.count.toString());
+        });
+});
+
+router.get('/countall', (req, res) => {
+    BookReader.findAndCountAll({
+            
+        })
+        .then(result => {
+            console.log('count:',result.count);
+
+           res.send(result.count.toString());
+        });
 });
 
 router.get('/', (req, res) => {
@@ -61,13 +173,14 @@ router.post('/', (req, res) => {
     var bookid = req.body.bookid;
     var username = req.body.username;
     var email = req.body.email;
-    var readerid =60001;
+    var readerid = 60001;
     var startdate = req.body.startdate;
     var ss = moment(startdate, "MM/DD/YYYY");
     // console.log(typeof startdate,ee);
-    var enddate = ss.add(1, 'months')
+    // var enddate = ss.add(1, 'months')
     // console.log('startdate bookReaders-----------No.6:', enddate);
-    var duration = moment(startdate, "MM/DD/YYYY").fromNow();
+    var duration = enddate - startdate;
+    // moment(startdate, "MM/DD/YYYY").fromNow();
     // console.log('duration: bookReaders-----------No.7:', duration);
     var sequence = 1;
     Reader.findAll({
@@ -78,8 +191,8 @@ router.post('/', (req, res) => {
     }).then(function(users) {
         console.log('bookReaders-----------No.3:', JSON.stringify(users));
         if (users.length > 0) {
-            readerid=users[0].readerid;
-            console.log('bookReaders-----------No.4:',readerid);
+            readerid = users[0].readerid;
+            console.log('bookReaders-----------No.4:', readerid);
 
             BookReader.findAll({
                 where: {

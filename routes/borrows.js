@@ -16,7 +16,7 @@ router.all('*',function(req,res,next){
 router.get('/', function(req, res) {
 	var connection = mysql.createConnection(dbconfig.connection);
 	var querystr=`
-SELECT a.firstname,a.lastname,a.church,a.groups,a.email,b.startdate,b.enddate,b.duration,c.bookname,c.author
+SELECT b.bookid,a.firstname,a.lastname,a.church,a.groups,a.email,b.startdate,b.enddate,b.duration,c.bookname,c.author
 	 	FROM test.readers as a
 	 	left join test.bookreaders as b
 	 	ON a.readerid = b.readerid
