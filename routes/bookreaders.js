@@ -2,12 +2,23 @@ var express = require('express');
 var router = express.Router();
 // const Sequelize = require('sequelize'); //ORM替代直接操作的mysql
 var mysql = require('mysql');
+
 var config = require('../config');
 var jwt = require('jsonwebtoken');
 var auth = require('../middleware/auth');
 var BookReader = require('../models/bookreadermodel');
 var Reader = require('../models/reader');
+var Book = require('../models/book');
+var _ = require('underscore');
+
+//关联表查询
+// Reader.hasMany(BookReader);
+// BookReader.belongsTo(Reader);
+// Book.hasMany(BookReader);
+// BookReader.belongsTo(Book);
+
 var moment = require('moment');
+const nodemailer = require('nodemailer');
 
 // var lolex = require("lolex");
 // var clock = lolex.install();
@@ -23,7 +34,8 @@ var clock = sinon.useFakeTimers();
 // console.log('bookReaders-----------No.1', BookReader);
 var schedule = require('node-schedule');
 var counter = 0,
-    taskSchedule = new schedule.RecurrenceRule();
+    taskSchedule = new schedule.RecurrenceRule(); //for Update duration records in database
+// var taskSchedule2 = new schedule.RecurrenceRule();
 
 taskSchedule.minute = 2;
 
@@ -35,11 +47,15 @@ function reportOnSchdeule() {
     console.log('The scheduled task ran. This is iteration #: ' + counter);
 
     BookReader.findAll({
+        // include: [{
+        //     model:Reader
+        // }],
         where: {
             enddate: null
         }
     }).then(function(bookreaders) {
-        // console.log('bookReaders-----------No.3:', JSON.stringify(bookreaders));
+        var maillist=[];
+        console.log('bookReaders-----------No.3:', JSON.stringify(bookreaders));
         if (bookreaders.length > 0) {
             bookreaders.forEach(function(bookreader) {
                 // console.log('bookreader.startdate No.8', bookreader);
@@ -56,6 +72,68 @@ function reportOnSchdeule() {
                 bookreader.save();
             })
 
+            var connection = mysql.createConnection(config.connection);
+            var querystr = `
+        SELECT a.email,b.duration,c.bookname
+        FROM test.readers as a
+        left join test.bookreaders as b
+        ON a.readerid = b.readerid
+        left join test.books as c on b.bookid = c.bookid
+        WHERE startdate is not null;
+            `;
+            connection.query(querystr,
+                function(err, rows) {
+                    if (err) console.log('Error selecting : s%', err);
+                    console.log('result in bookreader 1:', rows);
+
+                    if (rows.length > 0) {
+                        rows.forEach(function(reader) {
+                            // console.log('bookreader.startdate No.8', bookreader);
+
+                            if (reader.duration > 30) {
+                                maillist.push(reader.email)
+
+                            }
+                        })
+                    }
+                    console.log('maillist: BookReader 2:',maillist);
+                    var str=_.uniq(maillist);
+                    console.log('maillist: BookReader 3:',str.toString());
+                    ///////send email 
+                    // create reusable transporter object using the default SMTP transport
+                    /*****
+                    let transporter = nodemailer.createTransport({
+                        host: 'smtp.gmail.com',
+                        port: 465,
+                        secure: true, // secure:true for port 465, secure:false for port 587
+                        auth: {
+                            user: 'passinglightministry@gmail.com',
+                            pass: 'Goodluck'
+                        }
+                    });
+
+                    // setup email data with unicode symbols
+                    let mailOptions = {
+                        from: '"Passing Light Ministry👻" <passinglightministry@gmail.com>', // sender address
+                        to: 'midingpiaoling@gmail.com,piaolingmiding@gmail.com', // list of receivers
+                        subject: 'Hello ✔', // Subject line
+                        text: 'Hello world ?', // plain text body
+                        html: '<b>Hello world ?</b>' // html body
+                    };
+
+                    // send mail with defined transport object
+                    transporter.sendMail(mailOptions, (error, info) => {
+                        if (error) {
+                            return console.log(error);
+                        }
+                        console.log('Message %s sent: %s', info.messageId, info.response);
+                    });
+                    */
+
+                });
+
+            connection.end();
+
 
         }
 
@@ -64,14 +142,16 @@ function reportOnSchdeule() {
 }
 
 /*用于快速测试reportOnSchdeule函数是否更新了数据库*/
-// var myInterval = setInterval(reportOnSchdeule, 5000, "Interval");
+var myInterval = setInterval(reportOnSchdeule, 5000, "Interval");
 
-// function stopInterval() {
-//     clearTimeout(myInterval);
-//     //myInterval.unref();
-// }
-// setTimeout(stopInterval, 31000);
+function stopInterval() {
+    clearTimeout(myInterval);
+    //myInterval.unref();
+}
+setTimeout(stopInterval, 31000);
 // */
+
+
 schedule.scheduleJob(taskSchedule, reportOnSchdeule);
 console.log('The schdule has been initialzed');
 
@@ -124,20 +204,20 @@ router.get('/countreading', (req, res) => {
             }
         })
         .then(result => {
-            console.log('count:',result.count);
+            console.log('count:', result.count);
 
-           res.send(result.count.toString());
+            res.send(result.count.toString());
         });
 });
 
 router.get('/countall', (req, res) => {
     BookReader.findAndCountAll({
-            
+
         })
         .then(result => {
-            console.log('count:',result.count);
+            console.log('count:', result.count);
 
-           res.send(result.count.toString());
+            res.send(result.count.toString());
         });
 });
 

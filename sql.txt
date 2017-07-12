@@ -229,3 +229,10 @@ SUM( CASE WHEN questionid = '1001' and answer='Yes' THEN
                       
                       
 FROM  test.response
+
+
+
+7/12/2017
+passinglightministry@gmail.com
+Goodluck
+davidueux@gmail.com
