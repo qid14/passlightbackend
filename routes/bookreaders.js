@@ -97,11 +97,11 @@ function reportOnSchdeule() {
                         })
                     }
                     console.log('maillist: BookReader 2:',maillist);
-                    var str=_.uniq(maillist);
-                    console.log('maillist: BookReader 3:',str.toString());
+                    var mailListstr=_.uniq(maillist).toString();
+                    console.log('maillist: BookReader 3:',mailListstr);
                     ///////send email 
                     // create reusable transporter object using the default SMTP transport
-                    /*****
+                  
                     let transporter = nodemailer.createTransport({
                         host: 'smtp.gmail.com',
                         port: 465,
@@ -115,10 +115,10 @@ function reportOnSchdeule() {
                     // setup email data with unicode symbols
                     let mailOptions = {
                         from: '"Passing Light Ministry👻" <passinglightministry@gmail.com>', // sender address
-                        to: 'midingpiaoling@gmail.com,piaolingmiding@gmail.com', // list of receivers
-                        subject: 'Hello ✔', // Subject line
-                        text: 'Hello world ?', // plain text body
-                        html: '<b>Hello world ?</b>' // html body
+                        to: mailListstr, // list of receivers
+                        subject: 'A message from Passing Light Ministry', // Subject line
+                        text: 'YOUR COURTESY DUE DATE MESSAGE', // plain text body
+                        html: '<b>YOUR COURTESY DUE DATE MESSAGE: The book Queen of the Dark Chamber is due. Please pass it to another friend and log in to your account to verify it.</b>' // html body
                     };
 
                     // send mail with defined transport object
@@ -128,7 +128,7 @@ function reportOnSchdeule() {
                         }
                         console.log('Message %s sent: %s', info.messageId, info.response);
                     });
-                    */
+                    
 
                 });
 
@@ -142,13 +142,13 @@ function reportOnSchdeule() {
 }
 
 /*用于快速测试reportOnSchdeule函数是否更新了数据库*/
-var myInterval = setInterval(reportOnSchdeule, 5000, "Interval");
+// var myInterval = setInterval(reportOnSchdeule, 5000, "Interval");
 
-function stopInterval() {
-    clearTimeout(myInterval);
-    //myInterval.unref();
-}
-setTimeout(stopInterval, 31000);
+// function stopInterval() {
+//     clearTimeout(myInterval);
+//     //myInterval.unref();
+// }
+// setTimeout(stopInterval, 31000);
 // */
 
 
