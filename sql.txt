@@ -50,7 +50,7 @@ ALTER TABLE test.bookreaders modify duration varchar(45);
 SET SQL_SAFE_UPDATES = 0;
 
 
-  INSERT INTO test.bookreader(bookreaderid,bookid,readerid,sequence,startdate,enddate,duration)
+  INSERT INTO test.bookreaders(bookreaderid,bookid,readerid,sequence,startdate,enddate,duration)
   VALUES(800001,100001,400001,1,'2016-11-28','2016-12-28',1)
 
   批量插入数据
@@ -236,3 +236,17 @@ FROM  test.response
 passinglightministry@gmail.com
 Goodluck
 davidueux@gmail.com
+
+8/10/2017
+SELECT b.bookid,a.username,b.sequence from test.readers AS a left join test.bookreaders as b
+        ON a.readerid = b.readerid 
+        
+  update test.bookreaders set readerid='61005' where bookreaderid=39
+  update test.bookreaders set readerid='61007' where bookreaderid=41
+
+  Insert into test.bookreaders values(
+    INSERT INTO test.bookreaders(bookid,readerid,sequence,startdate,enddate,duration)
+    VALUES(100003,61032,1,'2017-06-28','2017-07-28',1)
+  
+     INSERT INTO test.bookreaders(bookid,readerid,sequence,startdate,enddate,duration)
+   VALUES(100003,61028,2,'2017-07-28','2017-08-08',1)

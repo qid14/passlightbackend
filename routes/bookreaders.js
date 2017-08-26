@@ -14,6 +14,14 @@ var _ = require('underscore');
 //关联表查询
 // Reader.hasMany(BookReader);
 // BookReader.belongsTo(Reader);
+// console.log('Reader     ', Reader);
+// console.log('BookReader     ', BookReader);
+// , { foreignKey: 'readerid' });
+
+
+// BookReader.hasMany(Reader);
+// Reader.belongsTo(BookReader);
+
 // Book.hasMany(BookReader);
 // BookReader.belongsTo(Book);
 
@@ -34,46 +42,46 @@ var clock = sinon.useFakeTimers();
 // console.log('bookReaders-----------No.1', BookReader);
 var schedule = require('node-schedule');
 var counter = 0,
-    taskSchedule = new schedule.RecurrenceRule(); //for Update duration records in database
+  taskSchedule = new schedule.RecurrenceRule(); //for Update duration records in database
 // var taskSchedule2 = new schedule.RecurrenceRule();
 
 taskSchedule.minute = 2;
 
 function reportOnSchdeule() {
-    //increment the counter
-    counter++;
+  //increment the counter
+  counter++;
 
-    //report that the scheduled task ran
-    console.log('The scheduled task ran. This is iteration #: ' + counter);
+  //report that the scheduled task ran
+  console.log('The scheduled task ran. This is iteration #: ' + counter);
 
-    BookReader.findAll({
-        // include: [{
-        //     model:Reader
-        // }],
-        where: {
-            enddate: null
-        }
-    }).then(function(bookreaders) {
-        var maillist=[];
-        console.log('bookReaders-----------No.3:', JSON.stringify(bookreaders));
-        if (bookreaders.length > 0) {
-            bookreaders.forEach(function(bookreader) {
-                // console.log('bookreader.startdate No.8', bookreader);
+  BookReader.findAll({
+    // include: [{
+    //     model:Reader
+    // }],
+    where: {
+      enddate: null
+    }
+  }).then(function(bookreaders) {
+    var maillist = [];
+    console.log('bookReaders-----------No.3:', JSON.stringify(bookreaders));
+    if (bookreaders.length > 0) {
+      bookreaders.forEach(function(bookreader) {
+        // console.log('bookreader.startdate No.8', bookreader);
 
-                b = moment(bookreader.startdate);
-                a = moment(new Date());
+        b = moment(bookreader.startdate);
+        a = moment(new Date());
 
 
-                // console.log('bookreader.startdate No.9', a.diff(b, 'days'));
-                bookreader.duration = a.diff(b, 'days');
+        // console.log('bookreader.startdate No.9', a.diff(b, 'days'));
+        bookreader.duration = a.diff(b, 'days');
 
-                // bookreader.duration = Math.floor(( moment.now()-bookreader.startdate  ) / 86400000);
-                console.log('bookReaders-----------No.10:', bookreader.duration);
-                bookreader.save();
-            })
+        // bookreader.duration = Math.floor(( moment.now()-bookreader.startdate  ) / 86400000);
+        console.log('bookReaders-----------No.10:', bookreader.duration);
+        bookreader.save();
+      })
 
-            var connection = mysql.createConnection(config.connection);
-            var querystr = `
+      var connection = mysql.createConnection(config.connection);
+      var querystr = `
         SELECT a.email,b.duration,c.bookname
         FROM test.readers as a
         left join test.bookreaders as b
@@ -81,63 +89,66 @@ function reportOnSchdeule() {
         left join test.books as c on b.bookid = c.bookid
         WHERE startdate is not null;
             `;
-            connection.query(querystr,
-                function(err, rows) {
-                    if (err) console.log('Error selecting : s%', err);
-                    console.log('result in bookreader 1:', rows);
+      connection.query(querystr,
+        function(err, rows) {
+          if (err) console.log('Error selecting : s%', err);
+          console.log('result in bookreader 1:', rows);
 
-                    if (rows.length > 0) {
-                        rows.forEach(function(reader) {
-                            // console.log('bookreader.startdate No.8', bookreader);
+          if (typeof rows !== "undefined" && rows.length > 0) {
+            rows.forEach(function(reader) {
+              // console.log('bookreader.startdate No.8', bookreader);
 
-                            if (reader.duration > 30) {
-                                maillist.push(reader.email)
+              if (reader.duration > 30) {
+                maillist.push(reader.email)
 
-                            }
-                        })
-                    }
-                    console.log('maillist: BookReader 2:',maillist);
-                    var mailListstr=_.uniq(maillist).toString();
-                    console.log('maillist: BookReader 3:',mailListstr);
-                    ///////send email 
-                    // create reusable transporter object using the default SMTP transport
-                  
-                    let transporter = nodemailer.createTransport({
-                        host: 'smtp.gmail.com',
-                        port: 465,
-                        secure: true, // secure:true for port 465, secure:false for port 587
-                        auth: {
-                            user: 'passinglightministry@gmail.com',
-                            pass: 'Goodluck'
-                        }
-                    });
+              }
+            })
+          } else {
+            console.log('Rows is undefined!');
+            return;
+          }
+          console.log('maillist: BookReader 2:', maillist);
+          var mailListstr = _.uniq(maillist).toString();
+          console.log('maillist: BookReader 3:', mailListstr);
+          ///////send email 
+          // create reusable transporter object using the default SMTP transport
 
-                    // setup email data with unicode symbols
-                    let mailOptions = {
-                        from: '"Passing Light Ministry👻" <passinglightministry@gmail.com>', // sender address
-                        to: mailListstr, // list of receivers
-                        subject: 'A message from Passing Light Ministry', // Subject line
-                        text: 'YOUR COURTESY DUE DATE MESSAGE', // plain text body
-                        html: '<b>YOUR COURTESY DUE DATE MESSAGE: The book Queen of the Dark Chamber is due. Please pass it to another friend and log in to your account to verify it.</b>' // html body
-                    };
+          let transporter = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true, // secure:true for port 465, secure:false for port 587
+            auth: {
+              user: 'passinglightministry@gmail.com',
+              pass: 'Goodluck'
+            }
+          });
 
-                    // send mail with defined transport object
-                    transporter.sendMail(mailOptions, (error, info) => {
-                        if (error) {
-                            return console.log(error);
-                        }
-                        console.log('Message %s sent: %s', info.messageId, info.response);
-                    });
-                    
+          // setup email data with unicode symbols
+          let mailOptions = {
+            from: '"Passing Light Ministry👻" <passinglightministry@gmail.com>', // sender address
+            to: mailListstr, // list of receivers
+            subject: 'A message from Passing Light Ministry', // Subject line
+            text: 'YOUR COURTESY DUE DATE MESSAGE', // plain text body
+            html: '<b>YOUR COURTESY DUE DATE MESSAGE: The book Queen of the Dark Chamber is due. Please pass it to another friend and log in to your account to verify it.</b>' // html body
+          };
 
-                });
-
-            connection.end();
+          // send mail with defined transport object
+          transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+              return console.log(error);
+            }
+            console.log('Message %s sent: %s', info.messageId, info.response);
+          });
 
 
-        }
+        });
 
-    })
+      connection.end();
+
+
+    }
+
+  })
 
 }
 
@@ -178,139 +189,210 @@ console.log('The schdule has been initialzed');
 // console.log('j is',j);
 
 router.all('*', function(req, res, next) {
-    console.log('Access-Control-Allow-Origin in questions');
-    res.set('Access-Control-Allow-Origin', 'http://localhost:3000'); //记得在HOSTS文件中加入127.0.0.1 local.host
-    res.set('Access-Control-Allow-Credentials', true);
-    res.set('Access-Control-Allow-Methods', 'GET');
-    res.set('Access-Control-Allow-Headers', 'X-Requested-Width,Content-Type,Authorization');
-    if ('OPTIONS' == req.method) return res.sendStatus(200);
-    next();
+  console.log('Access-Control-Allow-Origin in questions');
+  res.set('Access-Control-Allow-Origin', 'http://localhost:3000'); //记得在HOSTS文件中加入127.0.0.1 local.host
+  res.set('Access-Control-Allow-Credentials', true);
+  res.set('Access-Control-Allow-Methods', 'GET');
+  res.set('Access-Control-Allow-Headers', 'X-Requested-Width,Content-Type,Authorization');
+  if ('OPTIONS' == req.method) return res.sendStatus(200);
+  next();
 })
 router.get('/check-state', auth.verifyToken, (req, res) => {
 
-    let content = {
-        success: true,
-        message: 'Successfully logged in'
-    }
-    res.send(content);
+  let content = {
+    success: true,
+    message: 'Successfully logged in'
+  }
+  res.send(content);
 
 });
 
 
 router.get('/countreading', (req, res) => {
-    BookReader.findAndCountAll({
-            where: {
-                enddate: null
-            }
-        })
-        .then(result => {
-            console.log('count:', result.count);
+  BookReader.findAndCountAll({
+      where: {
+        enddate: null
+      }
+    })
+    .then(result => {
+      console.log('count:', result.count);
 
-            res.send(result.count.toString());
-        });
+      res.send(result.count.toString());
+    });
 });
 
 router.get('/countall', (req, res) => {
-    BookReader.findAndCountAll({
+  BookReader.findAndCountAll({
 
-        })
-        .then(result => {
-            console.log('count:', result.count);
+    })
+    .then(result => {
+      console.log('count:', result.count);
 
-            res.send(result.count.toString());
-        });
+      res.send(result.count.toString());
+    });
 });
 
 router.get('/', (req, res) => {
-    // console.log('bookreaders:', req);
-    // BookReader.findAll().then(function(results) {
+  // console.log('bookreaders:', req);
+  // BookReader.findAll().then(function(results) {
 
-    //     if (results.length > 0) {
-    //         results.forEach(function(r) {
-    //             r.duration = moment(r.startdate, "YYYY-MM-DD").fromNow();
-    //             r.save();
-    //         })
+  //     if (results.length > 0) {
+  //         results.forEach(function(r) {
+  //             r.duration = moment(r.startdate, "YYYY-MM-DD").fromNow();
+  //             r.save();
+  //         })
 
-    //     }
-    // })
-    BookReader.findAll().then(function(results) {
-        if (results.length > 0) {
-            results.forEach(function(r) {
-                r.duration = moment(r.startdate, "YYYY-MM-DD").fromNow();
-                r.save();
-            })
+  //     }
+  // })
+  BookReader.findAll().then(function(results) {
+    if (results.length > 0) {
+      results.forEach(function(r) {
+        r.duration = moment(r.startdate, "YYYY-MM-DD").fromNow();
+        r.save();
+      })
 
-        }
-        console.log('bookReaders-----------No.2:', JSON.stringify(results));
-        res.send(results);
-    });
+    }
+    console.log('bookReaders-----------No.2:', JSON.stringify(results));
+    res.send(results);
+  });
 
 });
+
+//query sequence
+router.post('/sequence', (req, res) => {
+
+  // var bookid = req.body.bookid;
+  var readerid = req.body.readerid;
+  // console.log('bookid:', bookid,readerid);
+  // res.send('ok');
+  var connection = mysql.createConnection(config.connection);
+  var qstr = 'SELECT bookid from test.bookreaders where readerid=' + readerid;
+  // var result = [];
+  // console.log(connection);
+  connection.query(qstr,
+    function(err, rows) {
+      if (err) console.log('Error selecting : s%', err);
+      rows.forEach(function(result1) {
+
+        var querystr =
+          'SELECT b.bookid,a.username,b.sequence from test.readers AS a left join test.bookreaders as b' +
+          ' ON a.readerid = b.readerid where bookid=' + result1.bookid
+        // + ' AND a.readerid='+readerid;
+        console.log('99999:', querystr);;
+        connection.query(querystr,
+          function(err, rows2) {
+            if (err) console.log('Error selecting : s%', err);
+
+
+            // result = rows2;
+            // console.log('mmmmmmm:', result);
+            res.send(rows2);
+          });
+        // console.log('dddddddd', result);
+        
+        // console.log('Success select bookid!',result1.bookid);    
+        // res.send(result1.bookid)
+      });
+      connection.end();
+
+
+    });
+
+
+  // connection.end();
+
+
+
+
+
+
+  /*
+    BookReader.find({ 
+      where: { bookid: bookid },
+       order: [
+          'sequence'
+        ],
+      include: [Reader] })
+
+
+      .then(function(results) {
+        if (results.length > 0) {
+          results.forEach(function(r) {
+            // console.log('sequence-----------No.2:', r);
+          })
+
+        }
+        console.log('sequence-----------No.3:', JSON.stringify(results));
+        res.send(results);
+      });
+      */
+});
+
 
 
 //新建传递关系
 router.post('/', (req, res) => {
-    var bookid = req.body.bookid;
-    var username = req.body.username;
-    var email = req.body.email;
-    var readerid = 60001;
-    var startdate = req.body.startdate;
-    var ss = moment(startdate, "MM/DD/YYYY");
-    // console.log(typeof startdate,ee);
-    // var enddate = ss.add(1, 'months')
-    // console.log('startdate bookReaders-----------No.6:', enddate);
-    var duration = enddate - startdate;
-    // moment(startdate, "MM/DD/YYYY").fromNow();
-    // console.log('duration: bookReaders-----------No.7:', duration);
-    var sequence = 1;
-    Reader.findAll({
+  var bookid = req.body.bookid;
+  var username = req.body.username;
+  var email = req.body.email;
+  var readerid = 60001;
+  var startdate = req.body.startdate;
+  var ss = moment(startdate, "MM/DD/YYYY");
+  // console.log(typeof startdate,ee);
+  // var enddate = ss.add(1, 'months')
+  // console.log('startdate bookReaders-----------No.6:', enddate);
+  var duration = enddate - startdate;
+  // moment(startdate, "MM/DD/YYYY").fromNow();
+  // console.log('duration: bookReaders-----------No.7:', duration);
+  var sequence = 1;
+  Reader.findAll({
+    where: {
+      username: username,
+      email: email
+    }
+  }).then(function(users) {
+    console.log('bookReaders-----------No.3:', JSON.stringify(users));
+    if (users.length > 0) {
+      readerid = users[0].readerid;
+      console.log('bookReaders-----------No.4:', readerid);
+
+      BookReader.findAll({
         where: {
-            username: username,
-            email: email
+          bookid: bookid
         }
-    }).then(function(users) {
-        console.log('bookReaders-----------No.3:', JSON.stringify(users));
-        if (users.length > 0) {
-            readerid = users[0].readerid;
-            console.log('bookReaders-----------No.4:', readerid);
+      }).then(function(result) {
 
-            BookReader.findAll({
-                where: {
-                    bookid: bookid
-                }
-            }).then(function(result) {
-
-                if (result.length > 0) {
-                    var maxsequence = Math.max.apply(Math, result.map(function(o) {
-                        return o.sequence;
-                    }))
-                    console.log('bookReaders-----------No.5:', maxsequence);
+        if (result.length > 0) {
+          var maxsequence = Math.max.apply(Math, result.map(function(o) {
+            return o.sequence;
+          }))
+          console.log('bookReaders-----------No.5:', maxsequence);
 
 
-                    BookReader.create({
+          BookReader.create({
 
-                        bookid: bookid,
-                        readerid: readerid,
-                        startdate: startdate,
-                        sequence: maxsequence + 1,
-                        enddate: enddate,
-                        duration: duration
+            bookid: bookid,
+            readerid: readerid,
+            startdate: startdate,
+            sequence: maxsequence + 1,
+            enddate: enddate,
+            duration: duration
 
-                    }).then(function(p) {
-                        console.log('Bookreader created.' + JSON.stringify(p));
+          }).then(function(p) {
+            console.log('Bookreader created.' + JSON.stringify(p));
 
-                        res.status(200).send('Insert new bookreader record ok!');
-                    }).catch(function(err) {
-                        console.log('failed: ' + err);
+            res.status(200).send('Insert new bookreader record ok!');
+          }).catch(function(err) {
+            console.log('failed: ' + err);
 
-                        res.render('error', {
-                            error: err
-                        })
-                    });
-                }
+            res.render('error', {
+              error: err
             })
+          });
         }
-    })
+      })
+    }
+  })
 
 })
 
@@ -318,28 +400,28 @@ router.post('/', (req, res) => {
 //查看借阅关系时要先刷新纪录
 router.put('/', (req, res) => {
 
-    // var startdate = req.body.startdate;
-    // var ss = moment(startdate, "MM/DD/YYYY");
+  // var startdate = req.body.startdate;
+  // var ss = moment(startdate, "MM/DD/YYYY");
 
-    // var duration = moment(startdate, "MM/DD/YYYY").fromNow();
-    // console.log('duration: bookReaders-----------No.8:', duration);
+  // var duration = moment(startdate, "MM/DD/YYYY").fromNow();
+  // console.log('duration: bookReaders-----------No.8:', duration);
 
-    BookReader.findAll().then(function(results) {
-        // console.log('bookReaders-----------No.9:', JSON.stringify(results));
+  BookReader.findAll().then(function(results) {
+    // console.log('bookReaders-----------No.9:', JSON.stringify(results));
 
-        if (results.length > 0) {
-            results.forEach(function(r) {
-                r.duration = moment(r.startdate, "YYYY-MM-DD").fromNow();
-                console.log('bookReaders-----------No.10:',
-                    r.startdate)
-                console.log('bookReaders-----------No.11:',
-                    r.duration)
+    if (results.length > 0) {
+      results.forEach(function(r) {
+        r.duration = moment(r.startdate, "YYYY-MM-DD").fromNow();
+        console.log('bookReaders-----------No.10:',
+          r.startdate)
+        console.log('bookReaders-----------No.11:',
+          r.duration)
 
-                r.save();
-            })
+        r.save();
+      })
 
-        }
-    })
+    }
+  })
 
 })
 
