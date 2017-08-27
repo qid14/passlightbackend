@@ -215,12 +215,14 @@ router.post('/', function(req, res) {
   var now = Date.now();
   var username = req.body.username;
   var password = req.body.password;
+  var email = req.body.email
 
 
   Reader.create({
 
     username: username,
     password: password,
+    email: email,
     createdAt: now,
     version: 0
   }).then(function(p) {
