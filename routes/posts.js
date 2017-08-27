@@ -9,10 +9,10 @@
 
 // router.post('/', function(req, res) {
 // 	console.log('body:',req.body);
-// 	console.log('INSERT test.posts(readername,content,createdAt ) '+
+// 	console.log('INSERT passinglight.posts(readername,content,createdAt ) '+
 // 	 	'VALUES '+','+req.body+');');
 // 	var connection = mysql.createConnection(dbconfig.connection);
-// 	 connection.query('INSERT test.readers(firstname,lastname,middlename,church,groups,email,phonenumber,memo) '+
+// 	 connection.query('INSERT passinglight.readers(firstname,lastname,middlename,church,groups,email,phonenumber,memo) '+
 // 	 	'VALUES '+','+req.body+');',
 // 	 	function(err){
 // 	 		if (err) console.log('Error INSERT : s%',err);

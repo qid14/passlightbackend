@@ -17,7 +17,7 @@ router.all('*', function(req, res, next) {
 router.get('/', function(req, res) {
     var connection = mysql.createConnection(dbconfig.connection);
     var querystr = `
-SELECT * from test.questions
+SELECT * from passinglight.questions
 	 	
 	`;
     connection.query(querystr,
@@ -37,7 +37,7 @@ router.post('/', function(req, res) {
     console.log('readerid：', readerid);
 
     var connection = mysql.createConnection(dbconfig.connection);
-    var query = connection.query('INSERT INTO test.response (questionid, readerid, answer) VALUES ?', [req.body],
+    var query = connection.query('INSERT INTO passinglight.response (questionid, readerid, answer) VALUES ?', [req.body],
         function(error, results, fields) {
             if (error) throw error;
             if (readerid) {

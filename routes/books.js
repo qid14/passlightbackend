@@ -16,12 +16,12 @@ router.all('*', function(req, res, next) {
 router.get('/', function(req, res) {
   var connection = mysql.createConnection(dbconfig.connection);
   connection.query(
-    'SELECT * FROM test.books',
+    'SELECT * FROM passinglight.books',
     // 'SELECT a.firstname,a.lastname,a.church,a.groups,a.email,b.startdate,b.enddate,b.duration,c.bookname,c.author'+
-    // ' FROM test.readers as a'+
-    // ' left join test.bookreader as b'+
+    // ' FROM passinglight.readers as a'+
+    // ' left join passinglight.bookreader as b'+
     // ' ON a.readerid = b.readerid'+
-    // ' left join test.books as c on b.bookid = c.bookid'+
+    // ' left join passinglight.books as c on b.bookid = c.bookid'+
     // ' WHERE startdate is not null;',
     function(err, rows) {
       if (err) console.log('Error selecting : s%', err);
@@ -35,7 +35,7 @@ router.delete('/', function(req, res) {
   var bookid = req.body.bookid;
   var connection = mysql.createConnection(dbconfig.connection);
   connection.query(
-    'DELETE FROM test.books WHERE bookid=' + bookid,
+    'DELETE FROM passinglight.books WHERE bookid=' + bookid,
 
     function(err, result) {
       if (err) console.log('Error delete : s%', err);
@@ -50,12 +50,12 @@ router.post('/', function(req, res) {
   var connection = mysql.createConnection(dbconfig.connection);
   connection.query(
 
-    'INSERT INTO test.books (bookid,bookname,author, version, price,location) VALUES ?', [req.body],
+    'INSERT INTO passinglight.books (bookid,bookname,author, version, price,location) VALUES ?', [req.body],
     // 'SELECT a.firstname,a.lastname,a.church,a.groups,a.email,b.startdate,b.enddate,b.duration,c.bookname,c.author'+
-    // ' FROM test.readers as a'+
-    // ' left join test.bookreader as b'+
+    // ' FROM passinglight.readers as a'+
+    // ' left join passinglight.bookreader as b'+
     // ' ON a.readerid = b.readerid'+
-    // ' left join test.books as c on b.bookid = c.bookid'+
+    // ' left join passinglight.books as c on b.bookid = c.bookid'+
     // ' WHERE startdate is not null;',
     function(err, result) {
       if (err) throw err;

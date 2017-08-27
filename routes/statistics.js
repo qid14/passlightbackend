@@ -61,12 +61,12 @@ SUM( CASE WHEN questionid = '1001' and answer='Yes' THEN
                   
                       
                       
-FROM  test.response`,
+FROM  passinglight.response`,
 	 	// 'SELECT a.firstname,a.lastname,a.church,a.groups,a.email,b.startdate,b.enddate,b.duration,c.bookname,c.author'+
-	 	// ' FROM test.readers as a'+
-	 	// ' left join test.bookreader as b'+
+	 	// ' FROM passinglight.readers as a'+
+	 	// ' left join passinglight.bookreader as b'+
 	 	// ' ON a.readerid = b.readerid'+
-	 	// ' left join test.books as c on b.bookid = c.bookid'+
+	 	// ' left join passinglight.books as c on b.bookid = c.bookid'+
 	 	// ' WHERE startdate is not null;',
 	 	function(err,rows){
 	 		if (err) console.log('Error selecting : s%',err);

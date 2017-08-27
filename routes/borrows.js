@@ -17,10 +17,10 @@ router.get('/', function(req, res) {
 	var connection = mysql.createConnection(dbconfig.connection);
 	var querystr=`
 SELECT b.bookid,a.firstname,a.lastname,a.church,a.groups,a.email,b.startdate,b.enddate,b.duration,c.bookname,c.author
-	 	FROM test.readers as a
-	 	left join test.bookreaders as b
+	 	FROM passinglight.readers as a
+	 	left join passinglight.bookreaders as b
 	 	ON a.readerid = b.readerid
-	 	left join test.books as c on b.bookid = c.bookid
+	 	left join passinglight.books as c on b.bookid = c.bookid
 	 	WHERE startdate is not null;
 	`;
 	 connection.query(querystr,
@@ -40,10 +40,10 @@ router.get('/:bookid', function(req, res) {
 	var connection = mysql.createConnection(dbconfig.connection);
 	var querystr=`
 SELECT b.bookid,a.firstname,a.lastname,a.church,a.groups,a.email,b.sequence,b.startdate,b.enddate,b.duration,c.bookname,c.author
-	 	FROM test.readers as a
-	 	left join test.bookreaders as b
+	 	FROM passinglight.readers as a
+	 	left join passinglight.bookreaders as b
 	 	ON a.readerid = b.readerid
-	 	left join test.books as c on b.bookid = c.bookid
+	 	left join passinglight.books as c on b.bookid = c.bookid
 	 	WHERE b.bookid=`+bookid+
 	 	' Order by b.sequence;'
 	;
