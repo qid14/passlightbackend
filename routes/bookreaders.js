@@ -189,7 +189,7 @@ console.log('The schdule has been initialzed');
 // console.log('j is',j);
 
 router.all('*', function(req, res, next) {
-  console.log('Access-Control-Allow-Origin in questions');
+  console.log('Access-Control-Allow-Origin in bookreaders');
   res.set('Access-Control-Allow-Origin', 'http://localhost:3000'); //记得在HOSTS文件中加入127.0.0.1 local.host
   res.set('Access-Control-Allow-Credentials', true);
   res.set('Access-Control-Allow-Methods', 'GET');
@@ -285,12 +285,12 @@ router.post('/sequence', (req, res) => {
 
   // var bookid = req.body.bookid;
   var readerid = req.body.readerid;
-  // console.log('bookid:', bookid,readerid);
+  console.log('bookid:', readerid);
   // res.send('ok');
   var connection = mysql.createConnection(config.connection);
   var qstr = 'SELECT bookid from passinglight.bookreaders where readerid=' + readerid;
   // var result = [];
-  // console.log(connection);
+  console.log('8888888888888888888888888888888',qstr);
   connection.query(qstr,
     function(err, rows) {
       if (err) console.log('Error selecting : s%', err);

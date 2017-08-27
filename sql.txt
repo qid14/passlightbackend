@@ -1,4 +1,4 @@
-CREATE TABLE `test`.`readers` (
+CREATE TABLE `passinglight`.`readers` (
   `readerid` INT NOT NULL AUTO_INCREMENT COMMENT '',
   `username` VARCHAR(64) NOT NULL COMMENT '',
   `firstname` VARCHAR(64)  NULL COMMENT '',
@@ -26,7 +26,7 @@ UNIQUE INDEX `readerid_UNIQUE` (`readerid` ASC)  COMMENT ''
  Add column finishquestion  VARCHAR(8) AFTER `role` 
 
 
-  CREATE TABLE `test`.`books` (
+  CREATE TABLE `passinglight`.`books` (
   `bookid` INT NOT NULL COMMENT '',
   `bookname` VARCHAR(45) NOT NULL COMMENT '',
   `author` VARCHAR(45) NULL COMMENT '',
@@ -35,7 +35,7 @@ UNIQUE INDEX `readerid_UNIQUE` (`readerid` ASC)  COMMENT ''
   `location` VARCHAR(45) NULL COMMENT '',
   PRIMARY KEY (`bookid`)  COMMENT '');
 
-CREATE TABLE `test`.`bookreaders` (
+CREATE TABLE `passinglight`.`bookreaders` (
   `bookreaderid` INT NOT NULL AUTO_INCREMENT COMMENT '',
   `bookid` INT NOT NULL COMMENT '',
   `readerid` INT NOT NULL COMMENT '',
@@ -123,7 +123,7 @@ SELECT × FROM test.bookreader where bookid =100001 group by sequence;
 
 
 
-  CREATE TABLE `test`.`books` (
+  CREATE TABLE `passinglight`.`books` (
   `bookid` INT NOT NULL COMMENT '',
   `bookname` VARCHAR(45) NOT NULL COMMENT '',
   `auther` VARCHAR(45) NULL COMMENT '',
@@ -132,7 +132,7 @@ SELECT × FROM test.bookreader where bookid =100001 group by sequence;
   `location` VARCHAR(45) NULL COMMENT '',
   PRIMARY KEY (`bookid`)  COMMENT '');
 
-CREATE TABLE `test`.`bookreader` (
+CREATE TABLE `passinglight`.`bookreader` (
   `bookreaderid` INT NOT NULL AUTO_INCREMENT COMMENT '',
   `bookid` INT NOT NULL COMMENT '',
   `readerid` INT NOT NULL COMMENT '',
@@ -146,13 +146,13 @@ CREATE TABLE `test`.`bookreader` (
 ----------------------------------------
 6/5/2017
 
-  CREATE TABLE `test`.`questions` (
+  CREATE TABLE `passinglight`.`questions` (
   `questionid` INT NOT NULL COMMENT '',
   `questiontext` VARCHAR(200) NOT NULL COMMENT '', 
   PRIMARY KEY (`questionid`)  COMMENT '');
 
 /*
-  CREATE TABLE `test`.`response` (
+  CREATE TABLE `passinglight`.`response` (
   `responseid` AUTO_INCREMENT=1000,
   `questionid` VARCHAR(45) NOT NULL COMMENT '',
   `readerid` VARCHAR(45) NOT NULL COMMENT '',
@@ -160,7 +160,7 @@ CREATE TABLE `test`.`bookreader` (
   PRIMARY KEY (`questionid`,`readerid`)  COMMENT '');
   */
 
-   CREATE TABLE `test`.`response` (
+   CREATE TABLE `passinglight`.`response` (
   `responseid` MEDIUMINT AUTO_INCREMENT,
   `questionid` VARCHAR(45) NOT NULL COMMENT '',
   `readerid` VARCHAR(45) NOT NULL COMMENT '',
@@ -169,7 +169,7 @@ CREATE TABLE `test`.`bookreader` (
 
 
 6/30/2017
-CREATE TABLE `test`.`posts` (
+CREATE TABLE `passinglight`.`posts` (
   `postid` INT NOT NULL AUTO_INCREMENT COMMENT '',
   `username` VARCHAR(64) NULL COMMENT '',
   `content` varchar(500) NULL,
