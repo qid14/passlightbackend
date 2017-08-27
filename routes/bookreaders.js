@@ -83,10 +83,10 @@ function reportOnSchdeule() {
       var connection = mysql.createConnection(config.connection);
       var querystr = `
         SELECT a.email,b.duration,c.bookname
-        FROM test.readers as a
-        left join test.bookreaders as b
+        FROM passinglight.readers as a
+        left join passinglight.bookreaders as b
         ON a.readerid = b.readerid
-        left join test.books as c on b.bookid = c.bookid
+        left join passinglight.books as c on b.bookid = c.bookid
         WHERE startdate is not null;
             `;
       connection.query(querystr,
@@ -118,14 +118,14 @@ function reportOnSchdeule() {
             port: 465,
             secure: true, // secure:true for port 465, secure:false for port 587
             auth: {
-              user: 'passinglightministry@gmail.com',
+              user: 'passinglight.ministry@gmail.com',
               pass: 'Goodluck'
             }
           });
 
           // setup email data with unicode symbols
           let mailOptions = {
-            from: '"Passing Light Ministry👻" <passinglightministry@gmail.com>', // sender address
+            from: '"Passing Light Ministry👻" <passinglight.ministry@gmail.com>', // sender address
             to: mailListstr, // list of receivers
             subject: 'A message from Passing Light Ministry', // Subject line
             text: 'YOUR COURTESY DUE DATE MESSAGE', // plain text body
@@ -247,8 +247,30 @@ router.get('/', (req, res) => {
   BookReader.findAll().then(function(results) {
     if (results.length > 0) {
       results.forEach(function(r) {
-        r.duration = moment(r.startdate, "YYYY-MM-DD").fromNow();
-        r.save();
+        if (r.enddate == null) {
+          start = moment(r.startdate);
+          end = moment(moment.now());
+
+
+          // console.log('bookreader.startdate No.9', a.diff(b, 'days'));
+          r.duration = end.diff(start, 'days');
+
+          // r.duration = moment(r.startdate, "YYYY-MM-DD").fromNow();
+          r.save();
+        } else {
+          start = moment(r.startdate);
+          end = moment(r.enddate);
+
+
+          // console.log('bookreader.startdate No.9', a.diff(b, 'days'));
+          r.duration = end.diff(start, 'days');
+
+          // bookreader.duration = Math.floor(( moment.now()-bookreader.startdate  ) / 86400000);
+          console.log('bookReaders-----------No.99:', r.duration);
+          r.save();
+
+        }
+
       })
 
     }
@@ -266,7 +288,7 @@ router.post('/sequence', (req, res) => {
   // console.log('bookid:', bookid,readerid);
   // res.send('ok');
   var connection = mysql.createConnection(config.connection);
-  var qstr = 'SELECT bookid from test.bookreaders where readerid=' + readerid;
+  var qstr = 'SELECT bookid from passinglight.bookreaders where readerid=' + readerid;
   // var result = [];
   // console.log(connection);
   connection.query(qstr,
@@ -275,9 +297,9 @@ router.post('/sequence', (req, res) => {
       rows.forEach(function(result1) {
 
         var querystr =
-          'SELECT b.bookid,a.username,b.sequence from test.readers AS a left join test.bookreaders as b' +
+          'SELECT b.bookid,a.username,b.sequence from passinglight.readers AS a left join passinglight.bookreaders as b' +
           ' ON a.readerid = b.readerid where bookid=' + result1.bookid
-        // + ' AND a.readerid='+readerid;
+          // + ' AND a.readerid='+readerid;
         console.log('99999:', querystr);;
         connection.query(querystr,
           function(err, rows2) {
@@ -289,7 +311,7 @@ router.post('/sequence', (req, res) => {
             res.send(rows2);
           });
         // console.log('dddddddd', result);
-        
+
         // console.log('Success select bookid!',result1.bookid);    
         // res.send(result1.bookid)
       });
@@ -300,9 +322,6 @@ router.post('/sequence', (req, res) => {
 
 
   // connection.end();
-
-
-
 
 
 
