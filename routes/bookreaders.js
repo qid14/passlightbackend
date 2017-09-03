@@ -285,7 +285,7 @@ router.post('/sequence', (req, res) => {
 
   // var bookid = req.body.bookid;
   var readerid = req.body.readerid;
-  console.log('bookid:', readerid);
+  console.log('readerid:', readerid);
   // res.send('ok');
   var connection = mysql.createConnection(config.connection);
   var qstr = 'SELECT bookid from passinglight.bookreaders where readerid=' + readerid;
