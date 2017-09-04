@@ -53,18 +53,38 @@ router.post('/', function(req, res) {
   var location = String(req.body.location);
   var price = String(req.body.price);
   var version = String(req.body.version);
+  var qty= req.body.qty;
+  console.log('qty:',qty)
   // console.log('sql str for insert is    ','INSERT INTO passinglight.books (bookname,author, location, price,version) VALUES ('+bookname,author,location,price,version+')');
   var connection = mysql.createConnection(dbconfig.connection);
-  connection.query(
+  if (qty>1)
+  {
+    var arrayofbooks=[];
+    for (i=0;i<qty;i++){
+      var book2insert = [bookname,author,location,price,version]
+      // console.log('book2insert:',book2insert);
+      arrayofbooks.push(book2insert);
 
+    }  
+    // console.log('arrayofbooks:',arrayofbooks);
+    // console.log('query str:', 'INSERT INTO passinglight.books (bookname,author, location, price,version) VALUES ?', [arrayofbooks]);
+     connection.query(
+    
+    'INSERT INTO passinglight.books (bookname,author, location, price,version) VALUES ?', [arrayofbooks],
+         function(err, result) {
+      if (err) 
+        { 
+          console.log('Error when insert new books.',err);
+          throw err;
+        }
+      console.log(qty+" books inserted");
+    });
+  }
+  else if (qty ==1){
+      connection.query(
     'INSERT INTO passinglight.books (bookname,author, location, price,version) VALUES ("'+
       bookname+'","'+author+'","'+location+'","'+price+'","'+version+'")',
-    // 'SELECT a.firstname,a.lastname,a.church,a.groups,a.email,b.startdate,b.enddate,b.duration,c.bookname,c.author'+
-    // ' FROM passinglight.readers as a'+
-    // ' left join passinglight.bookreader as b'+
-    // ' ON a.readerid = b.readerid'+
-    // ' left join passinglight.books as c on b.bookid = c.bookid'+
-    // ' WHERE startdate is not null;',
+    
     function(err, result) {
       if (err) 
         { 
@@ -73,6 +93,9 @@ router.post('/', function(req, res) {
         }
       console.log("1 record inserted");
     });
+
+  }
+
   console.log('finished added books!');
   connection.end();
 });
