@@ -35,7 +35,7 @@ router.post('/', function(req, res) {
     console.log('body--------------:', answersbody);
     let readerid = answersbody[0][1];
     console.log('readerid：', readerid);
-
+    console.log('query str:','INSERT INTO passinglight.response (questionid, readerid, answer) VALUES ?', [req.body])
     var connection = mysql.createConnection(dbconfig.connection);
     var query = connection.query('INSERT INTO passinglight.response (questionid, readerid, answer) VALUES ?', [req.body],
         function(error, results, fields) {

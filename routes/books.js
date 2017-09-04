@@ -47,10 +47,18 @@ router.delete('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
+  console.log('reqbody is    ',req.body);
+  var bookname = String(req.body.bookname);
+  var author = String(req.body.author);
+  var location = String(req.body.location);
+  var price = String(req.body.price);
+  var version = String(req.body.version);
+  // console.log('sql str for insert is    ','INSERT INTO passinglight.books (bookname,author, location, price,version) VALUES ('+bookname,author,location,price,version+')');
   var connection = mysql.createConnection(dbconfig.connection);
   connection.query(
 
-    'INSERT INTO passinglight.books (bookid,bookname,author, version, price,location) VALUES ?', [req.body],
+    'INSERT INTO passinglight.books (bookname,author, location, price,version) VALUES ("'+
+      bookname+'","'+author+'","'+location+'","'+price+'","'+version+'")',
     // 'SELECT a.firstname,a.lastname,a.church,a.groups,a.email,b.startdate,b.enddate,b.duration,c.bookname,c.author'+
     // ' FROM passinglight.readers as a'+
     // ' left join passinglight.bookreader as b'+
@@ -58,10 +66,14 @@ router.post('/', function(req, res) {
     // ' left join passinglight.books as c on b.bookid = c.bookid'+
     // ' WHERE startdate is not null;',
     function(err, result) {
-      if (err) throw err;
+      if (err) 
+        { 
+          console.log('Error when insert new book.',err);
+          throw err;
+        }
       console.log("1 record inserted");
     });
-  console.log('Success select books!');
+  console.log('finished added books!');
   connection.end();
 });
 
