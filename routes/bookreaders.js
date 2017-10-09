@@ -1,4 +1,5 @@
 var express = require('express');
+// var cors = require('cors')
 var router = express.Router();
 // const Sequelize = require('sequelize'); //ORM替代直接操作的mysql
 var mysql = require('mysql');
@@ -188,15 +189,15 @@ console.log('The schdule has been initialzed');
 // });
 // console.log('j is',j);
 
-router.all('*', function(req, res, next) {
-  console.log('Access-Control-Allow-Origin in bookreaders');
-  res.set('Access-Control-Allow-Origin', 'http://localhost:3000'); //记得在HOSTS文件中加入127.0.0.1 local.host
-  res.set('Access-Control-Allow-Credentials', true);
-  res.set('Access-Control-Allow-Methods', 'GET');
-  res.set('Access-Control-Allow-Headers', 'X-Requested-Width,Content-Type,Authorization');
-  if ('OPTIONS' == req.method) return res.sendStatus(200);
-  next();
-})
+// router.all('*', function(req, res, next) {
+//   console.log('Access-Control-Allow-Origin in bookreaders');
+//   res.set('Access-Control-Allow-Origin', 'http://localhost:3000'); //记得在HOSTS文件中加入127.0.0.1 local.host
+//   res.set('Access-Control-Allow-Credentials', true);
+//   res.set('Access-Control-Allow-Methods', 'GET');
+//   res.set('Access-Control-Allow-Headers', 'X-Requested-Width,Content-Type,Authorization');
+//   if ('OPTIONS' == req.method) return res.sendStatus(200);
+//   next();
+// })
 router.get('/check-state', auth.verifyToken, (req, res) => {
 
   let content = {
@@ -231,6 +232,29 @@ router.get('/countall', (req, res) => {
       res.send(result.count.toString());
     });
 });
+
+router.get('/:readerid', function(req, res) {
+
+  var readerid = req.params.readerid;
+  console.log('readerid get:', readerid);
+  try {
+    BookReader.findAll({
+      attributes: ['bookid', 'sequence', 'startdate', 'enddate','duration'],
+      where: {
+        readerid: readerid
+      }
+    }).then(function(bookreader) {
+      console.log(JSON.stringify(bookreader));
+      res.send(bookreader);
+    });
+
+
+  } catch (err) {
+    console.log(err);
+  }
+
+});
+
 
 router.get('/', (req, res) => {
   // console.log('bookreaders:', req);
@@ -356,11 +380,12 @@ router.post('/', (req, res) => {
   var email = req.body.email;
   var readerid = 60001;
   var startdate = req.body.startdate;
+  var enddate = null;
   var ss = moment(startdate, "MM/DD/YYYY");
-  // console.log(typeof startdate,ee);
+  console.log('postbook:------------',startdate);
   // var enddate = ss.add(1, 'months')
   // console.log('startdate bookReaders-----------No.6:', enddate);
-  var duration = enddate - startdate;
+  var duration = null;
   // moment(startdate, "MM/DD/YYYY").fromNow();
   // console.log('duration: bookReaders-----------No.7:', duration);
   var sequence = 1;

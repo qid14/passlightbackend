@@ -6,6 +6,7 @@ CREATE TABLE `passinglight`.`readers` (
   `middlename` VARCHAR(64) NULL COMMENT '',
   `password` VARCHAR(64) NULL COMMENT '',
   `role` VARCHAR(16) NULL COMMENT '',
+  finishquestion  VARCHAR(8),
   `church` VARCHAR(64) NULL COMMENT '',
   `groups` VARCHAR(64) NULL COMMENT '',
   `email` VARCHAR(64) NULL COMMENT '',

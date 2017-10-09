@@ -24,3 +24,10 @@ coverage
 
 # Benchmarking
 benchmarks/graphs
+
+public
+public1
+pub2
+
+.gitignore
+sq*.txt

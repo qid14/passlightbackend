@@ -16,7 +16,7 @@ var bookreaders = require('./routes/bookreaders');
 var posts = require('./routes/posts');
 var statistics = require('./routes/statistics');
 
-
+console.log('app.js begins:')
 // var corsOptions = {
 //   origin: 'http://localhost:3000',
 //   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204 
@@ -60,7 +60,7 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'pub2')));
 
 app.use('/', routes);
 app.use('/users', users);
